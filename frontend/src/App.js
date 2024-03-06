@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import Student from './components/Student';
-import StudentList from './components/StudentList';
+import Student from './components/Student/Student';
+import StudentList from './components/StudentList/StudentList';
 
 function App() {
   const studentArray = [
