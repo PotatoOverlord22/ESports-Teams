@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { TableRow, TableCell, Button, Typography } from "@mui/material";
+import "./TeamRow.css"
 
-export default function TeamRow({team, onEdit, onDelete}) {
+export default function TeamRow({ team, onEdit, onDelete }) {
     const [moreInfo, setMoreInfo] = useState(false);
 
     const handleMoreInfo = () => {
@@ -16,8 +17,11 @@ export default function TeamRow({team, onEdit, onDelete}) {
                 <TableCell align="center"><Typography variant="h5" sx={{ textAlign: "center" }}>{team.region}</Typography></TableCell>
                 <TableCell align="center">
                     <div className="extra-info">
-                        <img src="https://cdn-icons-png.freepik.com/256/329/329222.png" id="info-icon" onClick={
-                            () => { handleMoreInfo() }} />
+                        <img src="https://cdn-icons-png.freepik.com/256/329/329222.png"
+                            id="info-icon"
+                            onClick={() => { handleMoreInfo() }} 
+                            alt="more-info-icon.jpg"
+                            />
                         <Button variant="outlined" onClick={() => onEdit(team.id)}>Edit</Button>
                         <Button variant="outlined" onClick={() => onDelete(team.id)}>Delete</Button>
                     </div>
