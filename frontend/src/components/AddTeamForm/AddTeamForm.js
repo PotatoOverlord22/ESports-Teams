@@ -1,6 +1,6 @@
 import { TableRow, TableCell, Typography, Button, TextField } from "@mui/material"
 
-export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel}) {
+export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel, onPlayerFormChange}) {
     return (
         <>
             <TableRow>
@@ -38,6 +38,51 @@ export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel}
                             onChange={onFormChange}
                             inputProps={{
                                 "data-testid": "add-region-form-field",
+                            }}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            type="text"
+                            label="Player 1 name"
+                            name="name"
+                            value={newTeam.players[0].name}
+                            variant="filled"
+                            placeholder="Player name"
+                            gutterbottom="true"
+                            onChange={onPlayerFormChange}
+                            inputProps={{
+                                "data-testid": "add-player-name-field",
+                            }}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            type="text"
+                            label="Player 1 position"
+                            name="position"
+                            value={newTeam.players[0].position}
+                            variant="filled"
+                            placeholder="Player position"
+                            gutterbottom="true"
+                            onChange={onPlayerFormChange}
+                            inputProps={{
+                                "data-testid": "add-player-position-field",
+                            }}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            type="number"
+                            label="Player 1 kda"
+                            name="kda"
+                            value={newTeam.players[0].kda}
+                            variant="filled"
+                            placeholder="Player kda"
+                            gutterbottom="true"
+                            onChange={onPlayerFormChange}
+                            inputProps={{
+                                "data-testid": "add-player-kda-field",
                             }}
                             required
                         />

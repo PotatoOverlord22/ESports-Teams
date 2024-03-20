@@ -44,23 +44,36 @@ test('test add new team form subcomponent', () => {
 });
 
 test('test adding a team to the component', () => {
-  const { getByText, getByLabelText, getByTestId } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText, container, getByTestId } = render(<TeamTable teamsList={teamsList} />);
 
   fireEvent.click(getByText('Add new team'));
 
   // get the form input
   const nameInput = getByTestId('add-name-form-field');
   const regionInput = getByTestId('add-region-form-field');
+  const playerNameInput = getByTestId('add-player-name-field');
+  const playerPositionInput = getByTestId('add-player-position-field');
+  const playerKdaInput = getByTestId('add-player-kda-field');
   const addButton = getByText('Save new team');
 
   fireEvent.change(nameInput, { target: { value: 'new team name' } });
   fireEvent.change(regionInput, { target: { value: 'new region' } });
+  fireEvent.change(playerNameInput, { target: { value: 'new player' } });
+  fireEvent.change(playerPositionInput, { target: { value: 'new position' } });
+  fireEvent.change(playerKdaInput, { target: { value: 3.14 } });
 
   fireEvent.click(addButton);
 
   // check if it was added
   expect(getByText('new team name')).toBeInTheDocument();
   expect(getByText('new region')).toBeInTheDocument();
+  // click on the third info icon (again, maybe not the best test practice to have this into my 'add test')
+  const infoIcons = container.querySelectorAll('#info-icon');
+  fireEvent.click(infoIcons[2]);
+
+  expect(getByText('new player')).toBeInTheDocument();
+  expect(getByText('new position')).toBeInTheDocument();
+  expect(getByText('3.14')).toBeInTheDocument();
 });
 
 test('should trigger edit team when edit button is clicked', () => {

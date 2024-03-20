@@ -12,7 +12,7 @@ export default function TeamTable({ teamsList }) {
     const [isAddingTeam, setIsAddingTeam] = useState(false);
     const [editTeam, setEditTeam] = useState(null);
     const [editTeamName, setEditTeamName] = useState(null);
-    const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [] });
+    const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: 0 }] });
 
     const handleAddingTeam = () => {
         setIsAddingTeam(!isAddingTeam);
@@ -72,13 +72,27 @@ export default function TeamTable({ teamsList }) {
         }));
     };
 
+    const handlePlayerAddChange = (e) => {
+        // TODO: proper logic for mutiple player additions
+        // note: [name] <=> field we are changing
+        const { name, value } = e.target;
+        setNewTeam(prevTeam => ({
+            ...prevTeam,
+            players: [{
+                ...prevTeam.players[0],
+                [name]: value
+            }]
+        }));
+    }
+
+
     const handleAddTeam = (event) => {
         event.preventDefault();
         const newTeamWithId = { ...newTeam, id: Math.max(...teams.map(team => team.id)) + 1 }
         setTeams([...teams, newTeamWithId])
         setOriginalTeams([...teams, newTeamWithId])
         setIsAddingTeam(false)
-        setNewTeam({ name: '', region: '', players: [] })
+        setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] })
     }
 
     const handleSearch = (event) => {
@@ -115,7 +129,12 @@ export default function TeamTable({ teamsList }) {
                         ))}
                         {
                             isAddingTeam ? (
-                                <AddTeamForm newTeam={newTeam} onSubmit={handleAddTeam} onFormChange={handleAddChange} onCancel={() => setIsAddingTeam(false)} />
+                                <AddTeamForm
+                                    newTeam={newTeam}
+                                    onSubmit={handleAddTeam}
+                                    onFormChange={handleAddChange}
+                                    onCancel={() => setIsAddingTeam(false)} 
+                                    onPlayerFormChange={handlePlayerAddChange}/>
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={10} align="center">
