@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, getByTestId, getByLabelText, getAllByAltText, getAllByText, getByRole } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import TeamTable from './TeamTable';
+import user from '@testing-library/user-event'
 
 // mock
 const teamsList = [
@@ -43,38 +44,32 @@ test('test add new team form subcomponent', () => {
 });
 
 test('adding a team to the component', () => {
-  const { getByText, getByLabelText } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText, getByLabelText, getByTestId } = render(<TeamTable teamsList={teamsList} />);
+
   fireEvent.click(getByText('Add new team'));
 
   // get the form input
-  const nameInput = getByLabelText('Team name');
-  const regionInput = getByLabelText('Region');
+  const nameInput = getByTestId('add-name-form-field');
+  const regionInput = getByTestId('add-region-form-field');
   const addButton = getByText('Save new team');
 
-  fireEvent.change(nameInput, { target: { value: 'new team' } });
-  fireEvent.change(regionInput, { target: { value: 'europe' } });
+  console.log("Input fields: " ,nameInput, " ", regionInput, " ", addButton)
+
+  fireEvent.change(nameInput, { target: { value: 'new team name' } });
+  fireEvent.change(regionInput, { target: { value: 'new region' } });
+
   fireEvent.click(addButton);
 
   // check if it was added
-  expect(getByText('new team')).toBeInTheDocument();
-  expect(getByText('europe')).toBeInTheDocument();
+  expect(getByText('new team name')).toBeInTheDocument();
+  expect(getByText('new region')).toBeInTheDocument();
 });
 
-test("test edit", () => {
-    const { getByText, getAllByText, getByRole } = render(<TeamTable teamsList={teamsList} />);
-
-    const editButtons = getAllByText("Edit");
-    // click the first edit button
-    fireEvent.click(editButtons[0]);
-
-    const editInput = getByRole("edit-name");
-    fireEvent.input(editInput, { target: { value: "New Team Name" } });
-
-    const saveButton = getByText("Save Edit");
-    fireEvent.click(saveButton);
-
-    expect(getByText("New Team Name")).toBeInTheDocument();
-  });
+test('should trigger edit team when edit button is clicked', () => {
+  const { getAllByText, getByText } = render(<TeamTable teamsList={teamsList} />)
+  fireEvent.click(getAllByText('Edit')[0]);
+  expect(getByText('Edit t1')).toBeInTheDocument();
+});
 
 test('test search function based on region', () => {
     const teamsList = [

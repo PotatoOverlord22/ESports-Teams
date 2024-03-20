@@ -22,7 +22,7 @@ export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel}
                             gutterbottom="true"
                             onChange={onFormChange}
                             inputProps={{
-                                "data-testid": "testid1",
+                                "data-testid": "add-name-form-field",
                             }}
                             required
                         />
@@ -36,6 +36,9 @@ export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel}
                             placeholder="Region"
                             gutterbottom="true"
                             onChange={onFormChange}
+                            inputProps={{
+                                "data-testid": "add-region-form-field",
+                            }}
                             required
                         />
                         <br></br>

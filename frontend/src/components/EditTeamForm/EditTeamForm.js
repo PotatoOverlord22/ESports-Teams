@@ -1,4 +1,5 @@
 import { TextField, Typography, TableRow, TableCell, Button } from "@mui/material"
+import { Fragment } from "react"
 
 export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onFormChange, onPlayerFormChange, onCancel }) {
     return (
@@ -11,7 +12,7 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         type="text"
                         label="Name"
                         name="name"
-                        role="edit-name"
+                        data-testid="edit-name-form"
                         value={editTeam.name}
                         onChange={onFormChange}
                         variant="filled"
@@ -33,7 +34,7 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                     <br></br>
                     {
                         editTeam.players.map(player => (
-                            <>
+                            <Fragment key={player.name}>
                                 <TextField
                                     fullWidth
                                     type="text"
@@ -45,7 +46,7 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                                     gutterbottom="true"
                                 />
                                 <br></br>
-                            </>
+                            </Fragment>
                         ))
                     }
                     <br></br>

@@ -19,10 +19,12 @@ export default function TeamRow({ team, onEdit, onDelete }) {
                     <div className="extra-info">
                         <img src="https://cdn-icons-png.freepik.com/256/329/329222.png"
                             id="info-icon"
-                            onClick={() => { handleMoreInfo() }} 
+                            onClick={() => { handleMoreInfo() }}
                             alt="more-info-icon.jpg"
-                            />
-                        <Button variant="outlined" onClick={() => onEdit(team.id)}>Edit</Button>
+                        />
+                        <Button variant="outlined"
+                            onClick={() => onEdit(team.id)}
+                            role="edit-button">Edit</Button>
                         <Button variant="outlined" onClick={() => onDelete(team.id)}>Delete</Button>
                     </div>
                 </TableCell>
