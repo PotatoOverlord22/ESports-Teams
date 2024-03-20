@@ -8,6 +8,7 @@ export default function TeamTable({ teamsList }) {
     const [isAddingTeam, setIsAddingTeam] = useState(false);
     const [editTeam, setEditTeam] = useState(null);
     const [editTeamName, setEditTeamName] = useState(null);
+    const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [] });
 
     const handleMoreInfo = (teamId) => {
         setExpandedTeamId(teamId === expandedTeamId ? null : teamId);
@@ -64,6 +65,23 @@ export default function TeamTable({ teamsList }) {
         }));
     }
 
+    const handleAddChange = (e) => {
+        const { name, value } = e.target;
+        setNewTeam((prevTeam) => ({
+            ...prevTeam,
+            [name]: value,
+        }));
+    };
+
+    const handleAddTeam = (event) => {
+        event.preventDefault();
+        const newTeamWithId = {...newTeam, id: Math.max(...teams.map(team => team.id)) + 1}
+        setTeams([...teams, newTeamWithId])
+        setIsAddingTeam(false)
+        setNewTeam({ name: '', region: '', players: [] })
+    }
+
+
     return (
         <>
             <Paper elevation={14}>
@@ -77,7 +95,7 @@ export default function TeamTable({ teamsList }) {
                             <TableCell><Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold" }}>Logo</Typography></TableCell>
                             <TableCell><Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold" }}>Team Name</Typography></TableCell>
                             <TableCell><Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold" }}>Region</Typography></TableCell>
-                            <TableCell><Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold" }}>More info</Typography></TableCell>
+                            <TableCell><Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold" }}>Actions</Typography></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -132,14 +150,51 @@ export default function TeamTable({ teamsList }) {
                             isAddingTeam ? (
                                 <>
                                     <TableRow>
-                                        <h1>dasdfa  </h1>
-                                        <form>
-
-                                        </form>
+                                        <TableCell align="center" colSpan={10}>
+                                            <Typography variant="h6" sx={{ textAlign: "center" }}>Add a new team</Typography>
+                                        </TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell colSpan={10} align="center">
-                                            <Button variant="contained" onClick={() => handleAddingTeam()}>Save new team</Button>
+                                            <form onSubmit={handleAddTeam}>
+                                                <TextField
+                                                    fullWidth
+                                                    type="text"
+                                                    label="Team name"
+                                                    name="name"
+                                                    value={newTeam.name}
+                                                    variant="filled"
+                                                    placeholder="Team name"
+                                                    gutterbottom="true"
+                                                    onChange={handleAddChange}
+                                                    required
+                                                />
+                                                <TextField
+                                                    fullWidth
+                                                    type="text"
+                                                    label="Region"
+                                                    name="region"
+                                                    value={newTeam.region}
+                                                    variant="filled"
+                                                    placeholder="Region"
+                                                    gutterbottom="true"
+                                                    onChange={handleAddChange}
+                                                    required
+                                                />
+                                                <br></br>
+                                                <br></br>
+                                                <Button variant="contained" type="submit">Save new team</Button>
+                                                <br></br>
+                                                <br></br>
+                                                <Button variant="contained" onClick={() => { setIsAddingTeam(false) }}>
+                                                    Cancel
+                                                </Button>
+                                            </form>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell colSpan={10} align="center">
+
                                         </TableCell>
                                     </TableRow>
                                 </>
@@ -155,11 +210,11 @@ export default function TeamTable({ teamsList }) {
                             editTeam && (
 
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center">
+                                    <TableCell colSpan={10} align="center">
                                         <Typography variant="h5" sx={{ textAlign: "center", fontWeight: 'bold' }}>Edit {editTeamName}</Typography>
                                         <form onSubmit={handleSaveEdit}>
                                             <TextField
-
+                                                fullWidth
                                                 type="text"
                                                 label="Name"
                                                 name="name"
@@ -171,7 +226,7 @@ export default function TeamTable({ teamsList }) {
                                             />
                                             <br></br>
                                             <TextField
-
+                                                fullWidth
                                                 type="text"
                                                 label="Region"
                                                 name="region"
@@ -186,6 +241,7 @@ export default function TeamTable({ teamsList }) {
                                                 editTeam.players.map(player => (
                                                     <>
                                                         <TextField
+                                                            fullWidth
                                                             type="text"
                                                             label={player.position}
                                                             name={player.name}
@@ -198,6 +254,7 @@ export default function TeamTable({ teamsList }) {
                                                     </>
                                                 ))
                                             }
+                                            <br></br>
                                             <Button type="submit" variant="contained" gutterbottom="true">
                                                 Save Edit
                                             </Button>
