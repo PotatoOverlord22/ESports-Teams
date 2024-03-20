@@ -1,0 +1,23 @@
+.team-table-style{
+   
+}
+
+.team-logo{
+    max-width: 100px;
+}
+
+#info-icon{
+    width: 10%;
+    height: 10%;
+}
+
+#info-icon:hover{
+    cursor: pointer;
+}
+
+.extra-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5%;
+}

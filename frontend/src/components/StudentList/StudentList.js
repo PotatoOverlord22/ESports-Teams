@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Student from '../Student/Student';
+import {Button} from '@mui/material'
 
 const StudentList = ({studentList}) => {
   const [students, setStudents] = useState(studentList);
@@ -55,8 +56,8 @@ const StudentList = ({studentList}) => {
           placeholder="Age"
           required
         />
-        <button type='submit'> Add </button>
-        <button onClick={() => setAdding(false)}> Cancel </button>
+        <Button type='submit'> Add </Button>
+        <Button onClick={() => setAdding(false)}> Cancel </Button>
     </form>
     </div>
     ) 
