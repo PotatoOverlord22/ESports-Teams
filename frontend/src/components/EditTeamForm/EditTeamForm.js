@@ -12,7 +12,9 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         type="text"
                         label="Name"
                         name="name"
-                        data-testid="edit-name-form"
+                        inputProps={{
+                            "data-testid": "edit-name-form-field",
+                        }}
                         value={editTeam.name}
                         onChange={onFormChange}
                         variant="filled"
@@ -25,6 +27,9 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         type="text"
                         label="Region"
                         name="region"
+                        inputProps={{
+                            "data-testid": "edit-region-form-field",
+                        }}
                         value={editTeam.region}
                         onChange={onFormChange}
                         variant="filled"
@@ -32,19 +37,47 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         required
                     />
                     <br></br>
+                    <br></br>
                     {
                         editTeam.players.map(player => (
-                            <Fragment key={player.name}>
+                            <Fragment key={player.id}>
                                 <TextField
-                                    fullWidth
                                     type="text"
-                                    label={player.position}
-                                    name={player.name}
+                                    label="Player Name"
+                                    name="name"
+                                    inputProps={{
+                                        "data-testid": "edit-player-name-form-field",
+                                    }}
                                     value={player.name}
-                                    onChange={onPlayerFormChange}
-                                    variant="filled"
+                                    onChange={(event) => onPlayerFormChange(event, player.id)}
+                                    variant="outlined"
                                     gutterbottom="true"
                                 />
+                                <TextField
+                                    type="text"
+                                    label="Position"
+                                    name="position"
+                                    inputProps={{
+                                        "data-testid": "edit-player-position-form-field",
+                                    }}
+                                    value={player.position}
+                                    onChange={(event) => onPlayerFormChange(event, player.id)}
+                                    variant="outlined"
+                                    gutterbottom="true"
+                                />
+                                <TextField
+                                    type="number"
+                                    label="kda"
+                                    name="kda"
+                                    inputProps={{
+                                        "data-testid": "edit-player-kda-form-field",
+                                    }}
+                                    value={player.kda}
+                                    onChange={(event) => onPlayerFormChange(event, player.id)}
+                                    variant="outlined"
+                                    gutterbottom="true"
+                                />
+                                <br></br>
                                 <br></br>
                             </Fragment>
                         ))

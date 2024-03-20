@@ -44,7 +44,7 @@ export default function TeamRow({ team, onEdit, onDelete }) {
                             </TableCell>
                         </TableRow>
                         {team.players.map((player) => (
-                            <TableRow key={player.name}>
+                            <TableRow key={player.id}>
                                 <TableCell colSpan="2" align="center">
                                     <Typography variant="h6" sx={{ textAlign: "center" }}>{player.name}</Typography>
                                 </TableCell>

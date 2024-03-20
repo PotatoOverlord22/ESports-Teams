@@ -26,7 +26,6 @@ export default function TeamTable({ teamsList }) {
 
     const handleEditTeam = (teamId) => {
         const selectedTeamToEdit = teams.find((team) => team.id === teamId)
-        console.log("selected team: " + selectedTeamToEdit)
         setEditTeamName(selectedTeamToEdit.name)
         setEditTeam(selectedTeamToEdit)
     }
@@ -36,7 +35,6 @@ export default function TeamTable({ teamsList }) {
         const index = teams.findIndex(team => team.id === editTeam.id)
         const newEditedTeams = [...teams]
         newEditedTeams[index] = editTeam
-        console.log(editTeam)
         setTeams(newEditedTeams)
         setOriginalTeams(newEditedTeams)
         setEditTeamName(null)
@@ -45,20 +43,19 @@ export default function TeamTable({ teamsList }) {
 
     const handleEditFieldChange = (e) => {
         const { name, value } = e.target;
-        console.log(name + ": " + value)
         setEditTeam((prevEditTeam) => ({
             ...prevEditTeam, [name]: value
         }))
     }
 
-    const handleEditPlayerChange = (e) => {
+    const handleEditPlayerChange = (e, playerId) => {
         const { name, value } = e.target;
-        const playerToUpdateIndex = editTeam.players.findIndex(player => player.name === name)
+        const playerToUpdateIndex = editTeam.players.findIndex(player => player.id === playerId)
         const updatedPlayers = [...editTeam.players];
 
         updatedPlayers[playerToUpdateIndex] = {
             ...updatedPlayers[playerToUpdateIndex],
-            name: value
+            [name]: value
         };
 
         setEditTeam(prevEditTeam => ({
