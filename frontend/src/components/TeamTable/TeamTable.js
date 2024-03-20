@@ -4,8 +4,10 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import TeamRow from "../TeamRow/TeamRow";
 import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function TeamTable({ teamsList }) {
+    const [originalTeams, setOriginalTeams] = useState(teamsList)
     const [teams, setTeams] = useState(teamsList);
     const [isAddingTeam, setIsAddingTeam] = useState(false);
     const [editTeam, setEditTeam] = useState(null);
@@ -19,6 +21,7 @@ export default function TeamTable({ teamsList }) {
     const handleDeleteTeam = (teamId) => {
         const newTeams = teams.filter(team => team.id !== teamId)
         setTeams(newTeams)
+        setOriginalTeams(newTeams)
     }
 
     const handleEditTeam = (teamId) => {
@@ -35,6 +38,7 @@ export default function TeamTable({ teamsList }) {
         newEditedTeams[index] = editTeam
         console.log(editTeam)
         setTeams(newEditedTeams)
+        setOriginalTeams(newEditedTeams)
         setEditTeamName(null)
         setEditTeam(null)
     }
@@ -75,10 +79,17 @@ export default function TeamTable({ teamsList }) {
         event.preventDefault();
         const newTeamWithId = { ...newTeam, id: Math.max(...teams.map(team => team.id)) + 1 }
         setTeams([...teams, newTeamWithId])
+        setOriginalTeams([...teams, newTeamWithId])
         setIsAddingTeam(false)
         setNewTeam({ name: '', region: '', players: [] })
     }
 
+    const handleSearch = (event) => {
+        const { value } = event.target
+        setTeams(originalTeams)
+        const filteredTeams = originalTeams.filter(team => team.region.toLowerCase().match(value.toLowerCase()))
+        setTeams(filteredTeams)
+    }
 
     return (
         <>
@@ -97,6 +108,11 @@ export default function TeamTable({ teamsList }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={10} align="center">
+                                <SearchBar onSearch={handleSearch} />
+                            </TableCell>
+                        </TableRow>
                         {teams.map((team) => (
                             <TeamRow key={team.id} team={team} onEdit={handleEditTeam} onDelete={handleDeleteTeam} />
                         ))}
@@ -116,8 +132,8 @@ export default function TeamTable({ teamsList }) {
                                 editTeam={editTeam}
                                 editTeamNameCopy={editTeamName}
                                 onSubmit={handleSaveEdit}
-                                onFormChange={handleEditFieldChange} 
-                                onPlayerFormChange={handleEditPlayerChange} 
+                                onFormChange={handleEditFieldChange}
+                                onPlayerFormChange={handleEditPlayerChange}
                                 onCancel={() => { setEditTeam(null) }} />
                         }
 

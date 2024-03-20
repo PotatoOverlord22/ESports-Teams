@@ -21,6 +21,9 @@ export default function AddTeamForm({ newTeam, onSubmit, onFormChange, onCancel}
                             placeholder="Team name"
                             gutterbottom="true"
                             onChange={onFormChange}
+                            inputProps={{
+                                "data-testid": "testid1",
+                            }}
                             required
                         />
                         <TextField

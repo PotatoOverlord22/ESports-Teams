@@ -11,6 +11,7 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         type="text"
                         label="Name"
                         name="name"
+                        role="edit-name"
                         value={editTeam.name}
                         onChange={onFormChange}
                         variant="filled"
