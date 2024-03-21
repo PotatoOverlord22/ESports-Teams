@@ -19,10 +19,12 @@ export default function TeamRow({ team, onEdit, onDelete }) {
                     <div className="extra-info">
                         <img src="https://cdn-icons-png.freepik.com/256/329/329222.png"
                             id="info-icon"
-                            onClick={() => { handleMoreInfo() }} 
+                            onClick={() => { handleMoreInfo() }}
                             alt="more-info-icon.jpg"
-                            />
-                        <Button variant="outlined" onClick={() => onEdit(team.id)}>Edit</Button>
+                        />
+                        <Button variant="outlined"
+                            onClick={() => onEdit(team.id)}
+                            role="edit-button">Edit</Button>
                         <Button variant="outlined" onClick={() => onDelete(team.id)}>Delete</Button>
                     </div>
                 </TableCell>
@@ -42,7 +44,7 @@ export default function TeamRow({ team, onEdit, onDelete }) {
                             </TableCell>
                         </TableRow>
                         {team.players.map((player) => (
-                            <TableRow key={player.name}>
+                            <TableRow key={player.id}>
                                 <TableCell colSpan="2" align="center">
                                     <Typography variant="h6" sx={{ textAlign: "center" }}>{player.name}</Typography>
                                 </TableCell>
