@@ -1,42 +1,88 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import "./TeamTable.css"
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Grid, TextField } from "@mui/material";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Grid, TextField, Pagination } from "@mui/material";
 import TeamRow from "../TeamRow/TeamRow";
 import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
+import RegionPieChart from "../RegionPieChart/RegionPieChart";
+import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 
-export default function TeamTable({ teamsList }) {
-    const [originalTeams, setOriginalTeams] = useState(teamsList)
-    const [teams, setTeams] = useState(teamsList);
+export default function TeamTable({ teams, itemsPerPage = 5 }) {
+
+    const [allTeams, setAllTeams] = useState(teams);
+    const [teamsPerPage, setTeamsPerPage] = useState(itemsPerPage);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // total number of pages
+    const [totalPages, setTotalPages] = useState(Math.ceil(allTeams.length / teamsPerPage));
+
+    let indexOfLastTeam = teamsPerPage;
+    let indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
+
+    const firstPageTeams = allTeams.slice(indexOfFirstTeam, indexOfLastTeam);
+    const [displayedTeams, setDisplayedTeams] = useState(firstPageTeams);
+    const [currentPageTeams, setCurrentPageTeams] = useState(firstPageTeams);
+
+    useEffect(() => {
+        setDisplayedTeams(currentPageTeams);
+    }, [currentPageTeams])
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(allTeams.length / teamsPerPage))
+    }, [allTeams])
+
+    useEffect(() => {
+        handlePagination(currentPage);
+    }, [allTeams])
+
+    useEffect(() =>{
+        setTotalPages(Math.ceil(allTeams.length / teamsPerPage))
+    }, [teamsPerPage])
+
+    const handleTeamsPerPageChange = (numberOfTeams) => {
+        setTeamsPerPage(numberOfTeams);
+        indexOfLastTeam = currentPage * numberOfTeams;
+        indexOfFirstTeam = indexOfLastTeam - numberOfTeams;
+        setCurrentPageTeams(allTeams.slice(indexOfFirstTeam, indexOfLastTeam));
+    }
+
+    const handlePagination = (pageNumber) => {
+        // calculate index ranges in teams for the current page
+        indexOfLastTeam = pageNumber * teamsPerPage;
+        indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
+        setCurrentPageTeams(allTeams.slice(indexOfFirstTeam, indexOfLastTeam));
+        setCurrentPage(pageNumber);
+    }
+
     const [isAddingTeam, setIsAddingTeam] = useState(false);
+    const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: 0 }] });
+
     const [editTeam, setEditTeam] = useState(null);
     const [editTeamName, setEditTeamName] = useState(null);
-    const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: 0 }] });
+
 
     const handleAddingTeam = () => {
         setIsAddingTeam(!isAddingTeam);
     }
 
     const handleDeleteTeam = (teamId) => {
-        const newTeams = teams.filter(team => team.id !== teamId)
-        setTeams(newTeams)
-        setOriginalTeams(newTeams)
+        const newTeams = allTeams.filter(team => team.id !== teamId)
+        setAllTeams(newTeams)
     }
 
     const handleEditTeam = (teamId) => {
-        const selectedTeamToEdit = teams.find((team) => team.id === teamId)
+        const selectedTeamToEdit = displayedTeams.find((team) => team.id === teamId)
         setEditTeamName(selectedTeamToEdit.name)
         setEditTeam(selectedTeamToEdit)
     }
 
     const handleSaveEdit = (event) => {
         event.preventDefault();
-        const index = teams.findIndex(team => team.id === editTeam.id)
-        const newEditedTeams = [...teams]
+        const index = allTeams.findIndex(team => team.id === editTeam.id)
+        const newEditedTeams = [...allTeams]
         newEditedTeams[index] = editTeam
-        setTeams(newEditedTeams)
-        setOriginalTeams(newEditedTeams)
+        setAllTeams(newEditedTeams)
         setEditTeamName(null)
         setEditTeam(null)
     }
@@ -73,7 +119,7 @@ export default function TeamTable({ teamsList }) {
     };
 
     const handlePlayerAddChange = (e) => {
-        // TODO: proper logic for mutiple player additions
+        // TODO: proper logic for multiple player additions
         // note: [name] <=> field we are changing
         const { name, value } = e.target;
         setNewTeam(prevTeam => ({
@@ -88,18 +134,17 @@ export default function TeamTable({ teamsList }) {
 
     const handleAddTeam = (event) => {
         event.preventDefault();
-        const newTeamWithId = { ...newTeam, id: Math.max(...teams.map(team => team.id)) + 1 }
-        setTeams([...teams, newTeamWithId])
-        setOriginalTeams([...teams, newTeamWithId])
+        const newTeamWithId = { ...newTeam, id: Math.max(...allTeams.map(team => team.id)) + 1 }
+        setAllTeams([...allTeams, newTeamWithId])
         setIsAddingTeam(false)
         setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] })
     }
 
     const handleSearch = (event) => {
         const { value } = event.target
-        setTeams(originalTeams)
-        const filteredTeams = originalTeams.filter(team => team.region.toLowerCase().match(value.toLowerCase()))
-        setTeams(filteredTeams)
+        setDisplayedTeams(currentPageTeams)
+        const filteredTeams = currentPageTeams.filter(team => team.region.toLowerCase().match(value.toLowerCase()))
+        setDisplayedTeams(filteredTeams)
     }
 
     return (
@@ -124,7 +169,7 @@ export default function TeamTable({ teamsList }) {
                                 <SearchBar onSearch={handleSearch} />
                             </TableCell>
                         </TableRow>
-                        {teams.map((team) => (
+                        {displayedTeams.map((team) => (
                             <TeamRow key={team.id} team={team} onEdit={handleEditTeam} onDelete={handleDeleteTeam} />
                         ))}
                         {
@@ -133,8 +178,8 @@ export default function TeamTable({ teamsList }) {
                                     newTeam={newTeam}
                                     onSubmit={handleAddTeam}
                                     onFormChange={handleAddChange}
-                                    onCancel={() => setIsAddingTeam(false)} 
-                                    onPlayerFormChange={handlePlayerAddChange}/>
+                                    onCancel={() => setIsAddingTeam(false)}
+                                    onPlayerFormChange={handlePlayerAddChange} />
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={10} align="center">
@@ -152,11 +197,19 @@ export default function TeamTable({ teamsList }) {
                                 onPlayerFormChange={handleEditPlayerChange}
                                 onCancel={() => { setEditTeam(null) }} />
                         }
-
                     </TableBody>
                 </Table>
             </TableContainer>
+            <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
+                <RegionPieChart listOfTeams={allTeams} />
+            </div>
 
+            <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
+                <Pagination count={totalPages} onChange={(event, page) => handlePagination(page)} size="large" color="primary"
+                    data-testid="pagination"
+                />
+            </div>
+            <DropdownNumbers maxLength={allTeams.length} step={3} onChange={handleTeamsPerPageChange} title="Teams per page"/>
         </>
     );
 }
