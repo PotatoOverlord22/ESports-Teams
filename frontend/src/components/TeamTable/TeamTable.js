@@ -6,6 +6,7 @@ import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
 import RegionPieChart from "../RegionPieChart/RegionPieChart";
+import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 
 export default function TeamTable({ teams, itemsPerPage = 5 }) {
 
@@ -34,6 +35,17 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
     useEffect(() => {
         handlePagination(currentPage);
     }, [allTeams])
+
+    useEffect(() =>{
+        setTotalPages(Math.ceil(allTeams.length / teamsPerPage))
+    }, [teamsPerPage])
+
+    const handleTeamsPerPageChange = (numberOfTeams) => {
+        setTeamsPerPage(numberOfTeams);
+        indexOfLastTeam = currentPage * numberOfTeams;
+        indexOfFirstTeam = indexOfLastTeam - numberOfTeams;
+        setCurrentPageTeams(allTeams.slice(indexOfFirstTeam, indexOfLastTeam));
+    }
 
     const handlePagination = (pageNumber) => {
         // calculate index ranges in teams for the current page
@@ -189,7 +201,7 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
                 </Table>
             </TableContainer>
             <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
-                <RegionPieChart listOfTeams={displayedTeams} />
+                <RegionPieChart listOfTeams={allTeams} />
             </div>
 
             <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
@@ -197,6 +209,7 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
                     data-testid="pagination"
                 />
             </div>
+            <DropdownNumbers maxLength={allTeams.length} step={3} onChange={handleTeamsPerPageChange} title="Teams per page"/>
         </>
     );
 }
