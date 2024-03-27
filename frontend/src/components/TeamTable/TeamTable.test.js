@@ -4,6 +4,19 @@ import '@testing-library/jest-dom/extend-expect';
 import TeamTable from './TeamTable';
 import user from '@testing-library/user-event'
 
+// NOTE TO SELF: stop using jest, too many issues
+// this fixes an issue with jest and render() function
+window.matchMedia = (query) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: jest.fn(), // Deprecated
+  removeListener: jest.fn(), // Deprecated
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+})
+
 // mock
 const teamsList = [
   { id: 1, name: 't1', region: 'r1', players: [{ name: "test-name", position: "test-position", kda: 0.01 }, { name: "test-name2", position: "test-position2", kda: 0.02 }] },
@@ -151,4 +164,33 @@ test('test delete team', () => {
 
   // the deleted team should no longer be on screen
   expect(() => getByText('t1')).toThrow();
+})
+
+test('test region piechart', () => {
+  const { getAllByText, getByText } = render(<TeamTable teams={teamsList} />)
+  // regions should be a label in the piechart which is displayed below the teams, so index 1
+  expect(getAllByText('r1')[1]).toBeInTheDocument();
+  expect(getAllByText('r2')[1]).toBeInTheDocument();
+})
+
+test('test pagination', () => {
+  // show only one team per page, we should have two pages
+  const { getByTestId, getByRole, getByText } = render(<TeamTable teams={teamsList} itemsPerPage={1} />)
+  const pagination = getByTestId('pagination')
+
+  // the first team should be in the document, the second one shouldn't be
+  expect(getByText('t1')).toBeInTheDocument();
+  expect(() => getByText('t2')).toThrow();
+
+  // get the next page button
+  const nextPageButton = getByRole("button", {
+    name: "Go to next page",
+  });
+
+  // click to the next page
+  fireEvent.click(nextPageButton);
+
+  // now the first team shouldn't be in the document and the second one should
+  expect(() => getByText('t1')).toThrow();
+  expect(getByText('t2')).toBeInTheDocument();
 })

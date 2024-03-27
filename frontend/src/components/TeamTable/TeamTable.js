@@ -8,19 +8,6 @@ import SearchBar from "../SearchBar/SearchBar";
 import RegionPieChart from "../RegionPieChart/RegionPieChart";
 
 export default function TeamTable({ teams, itemsPerPage = 5 }) {
-    Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: jest.fn().mockImplementation(query => ({
-          matches: false,
-          media: query,
-          onchange: null,
-          addListener: jest.fn(), // deprecated
-          removeListener: jest.fn(), // deprecated
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        })),
-      });
 
     const [allTeams, setAllTeams] = useState(teams);
     const [teamsPerPage, setTeamsPerPage] = useState(itemsPerPage);
@@ -201,12 +188,14 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <div style={{ display: 'flex', marginTop: "20px", alignItems:'center', justifyContent:'center'}}>
+            <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
                 <RegionPieChart listOfTeams={displayedTeams} />
             </div>
 
-            <div style={{ display: 'flex', marginTop: "20px", alignItems:'center', justifyContent:'center'}}>
-                <Pagination count={totalPages} onChange={(event, page) => handlePagination(page)} size="large" color="primary"/>
+            <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
+                <Pagination count={totalPages} onChange={(event, page) => handlePagination(page)} size="large" color="primary"
+                    data-testid="pagination"
+                />
             </div>
         </>
     );
