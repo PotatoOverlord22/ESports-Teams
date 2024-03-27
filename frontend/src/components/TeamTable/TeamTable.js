@@ -5,11 +5,11 @@ import TeamRow from "../TeamRow/TeamRow";
 import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
-import { all } from "q";
+import RegionPieChart from "../RegionPieChart/RegionPieChart";
 
 export default function TeamTable({ allTeams, setAllTeams }) {
 
-    const [teamsPerPage, setTeamsPerPage] = useState(2);
+    const [teamsPerPage, setTeamsPerPage] = useState(3);
     const [currentPage, setCurrentPage] = useState(1);
 
     // total number of pages
@@ -201,8 +201,11 @@ export default function TeamTable({ allTeams, setAllTeams }) {
                     </TableBody>
                 </Table>
             </TableContainer>
-            
-            <div style={{ display: 'flex', marginTop: "10px", alignItems:'center', justifyContent:'center'}}>
+            <div style={{ display: 'flex', marginTop: "20px", alignItems:'center', justifyContent:'center'}}>
+                <RegionPieChart listOfTeams={displayedTeams} />
+            </div>
+
+            <div style={{ display: 'flex', marginTop: "20px", alignItems:'center', justifyContent:'center'}}>
                 <Pagination count={totalPages} onChange={(event, page) => handlePagination(page)} size="large" color="primary"/>
             </div>
         </>
