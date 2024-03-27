@@ -11,7 +11,7 @@ const teamsList = [
 ];
 
 test('test correct headings and buttons are displayed', () => {
-  const { getByText } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText } = render(<TeamTable teams={teamsList} />);
   expect(getByText('Esports teams')).toBeInTheDocument()
   expect(getByText('Logo')).toBeInTheDocument()
   expect(getByText('Team Name')).toBeInTheDocument()
@@ -21,19 +21,20 @@ test('test correct headings and buttons are displayed', () => {
 });
 
 test('test teams to be displayed', () => {
-  const { getByText } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText } = render(<TeamTable teams={teamsList} />);
   expect(getByText('t1')).toBeInTheDocument()
   expect(getByText('t2')).toBeInTheDocument()
 });
 
 test('test regions to be displayed', () => {
-  const { getByText } = render(<TeamTable teamsList={teamsList} />)
-  expect(getByText('r1')).toBeInTheDocument()
-  expect(getByText('r2')).toBeInTheDocument()
+  const { getAllByText } = render(<TeamTable teams={teamsList} />)
+  // Since adding a region piechart we have two items displaying the region, we want the first one
+  expect(getAllByText('r1')[0]).toBeInTheDocument()
+  expect(getAllByText('r2')[0]).toBeInTheDocument()
 })
 
 test('test add new team form subcomponent', () => {
-  const { getByText } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText } = render(<TeamTable teams={teamsList} />);
   // get the add team button
   const addButton = getByText('Add new team');
   // click on the button
@@ -44,7 +45,7 @@ test('test add new team form subcomponent', () => {
 });
 
 test('test adding a team to the component', () => {
-  const { getByText, container, getByTestId } = render(<TeamTable teamsList={teamsList} />);
+  const { getByText, container, getByTestId, getAllByText } = render(<TeamTable teams={teamsList} />);
 
   fireEvent.click(getByText('Add new team'));
 
@@ -66,7 +67,8 @@ test('test adding a team to the component', () => {
 
   // check if it was added
   expect(getByText('new team name')).toBeInTheDocument();
-  expect(getByText('new region')).toBeInTheDocument();
+  // Since adding a region piechart we have two items displaying the region, we want the first one
+  expect(getAllByText('new region')[0]).toBeInTheDocument();
   // click on the third info icon (again, maybe not the best test practice to have this into my 'add test')
   const infoIcons = container.querySelectorAll('#info-icon');
   fireEvent.click(infoIcons[2]);
@@ -77,14 +79,14 @@ test('test adding a team to the component', () => {
 });
 
 test('should trigger edit team when edit button is clicked', () => {
-  const { getAllByText, getByText } = render(<TeamTable teamsList={teamsList} />)
+  const { getAllByText, getByText } = render(<TeamTable teams={teamsList} />)
   // click the first edit button
   fireEvent.click(getAllByText('Edit')[0]);
   expect(getByText('Edit t1')).toBeInTheDocument();
 });
 
 test("test editing a team's fields", () => {
-  const { getAllByText, getByText, getByTestId, getAllByTestId, container } = render(<TeamTable teamsList={teamsList} />)
+  const { getAllByText, getByText, getByTestId, getAllByTestId, container } = render(<TeamTable teams={teamsList} />)
   // click on the first edit button
   fireEvent.click(getAllByText('Edit')[0]);
 
@@ -114,7 +116,7 @@ test("test editing a team's fields", () => {
 
   // check if everything edited is on screen
   expect(getByText('edited team name')).toBeInTheDocument();
-  expect(getByText('edited region name')).toBeInTheDocument();
+  expect(getAllByText('edited region name')[0]).toBeInTheDocument();
   // now we have to click more info to see these fields (kinda breaking the single responsibility of this test by accessing so many parts)
   const infoIcon = container.querySelector('#info-icon');
   fireEvent.click(infoIcon);
@@ -130,7 +132,7 @@ test('test search function based on region', () => {
     { id: 2, name: 't2', region: 'NORTH AMERICA', players: [] },
     { id: 3, name: 't3', region: 'EUROPEEE', players: [] },
   ];
-  const { getByPlaceholderText, getByText } = render(<TeamTable teamsList={teamsList} />);
+  const { getByPlaceholderText, getByText } = render(<TeamTable teams={teamsList} />);
 
   const searchInput = getByPlaceholderText('Search by region...');
 
@@ -143,7 +145,7 @@ test('test search function based on region', () => {
 });
 
 test('test delete team', () => {
-  const { getAllByText, getByText } = render(<TeamTable teamsList={teamsList} />)
+  const { getAllByText, getByText } = render(<TeamTable teams={teamsList} />)
   // click on the first delete button (deletes the first team)
   fireEvent.click(getAllByText('Delete')[0]);
 

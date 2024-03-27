@@ -7,8 +7,22 @@ import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
 import RegionPieChart from "../RegionPieChart/RegionPieChart";
 
-export default function TeamTable({ allTeams, setAllTeams, itemsPerPage }) {
+export default function TeamTable({ teams, itemsPerPage = 5 }) {
+    Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // deprecated
+          removeListener: jest.fn(), // deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        })),
+      });
 
+    const [allTeams, setAllTeams] = useState(teams);
     const [teamsPerPage, setTeamsPerPage] = useState(itemsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -34,23 +48,12 @@ export default function TeamTable({ allTeams, setAllTeams, itemsPerPage }) {
         handlePagination(currentPage);
     }, [allTeams])
 
-    const logPagination = (pageNumber) => {
-        console.log('---------');
-        console.log("pageNumber:  ", pageNumber);
-        console.log("index of first team: ", indexOfFirstTeam);
-        console.log("index of last team: ", indexOfLastTeam);
-        console.log("CURRENT TEAMS: ", displayedTeams);
-        console.log("TEAMS: ", allTeams);
-    }
-
     const handlePagination = (pageNumber) => {
         // calculate index ranges in teams for the current page
         indexOfLastTeam = pageNumber * teamsPerPage;
         indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
         setCurrentPageTeams(allTeams.slice(indexOfFirstTeam, indexOfLastTeam));
         setCurrentPage(pageNumber);
-
-        logPagination(pageNumber);
     }
 
     const [isAddingTeam, setIsAddingTeam] = useState(false);
@@ -136,9 +139,6 @@ export default function TeamTable({ allTeams, setAllTeams, itemsPerPage }) {
         setAllTeams([...allTeams, newTeamWithId])
         setIsAddingTeam(false)
         setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] })
-
-        console.log("--------new team: ", newTeam)
-        console.log("all teams: ", allTeams)
     }
 
     const handleSearch = (event) => {
