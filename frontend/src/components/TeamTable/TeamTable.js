@@ -7,9 +7,9 @@ import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
 import RegionPieChart from "../RegionPieChart/RegionPieChart";
 
-export default function TeamTable({ allTeams, setAllTeams }) {
+export default function TeamTable({ allTeams, setAllTeams, itemsPerPage }) {
 
-    const [teamsPerPage, setTeamsPerPage] = useState(3);
+    const [teamsPerPage, setTeamsPerPage] = useState(itemsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
 
     // total number of pages

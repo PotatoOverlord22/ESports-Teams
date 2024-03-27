@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="App">
-      <TeamTable allTeams={teams} setAllTeams={setTeams}></TeamTable>
+      <TeamTable allTeams={teams} setAllTeams={setTeams} itemsPerPage={3}></TeamTable>
     </div>
   );
 }
