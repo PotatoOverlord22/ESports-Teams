@@ -30,15 +30,11 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
 
     useEffect(() => {
         setTotalPages(Math.ceil(allTeams.length / teamsPerPage))
-    }, [allTeams])
+    }, [allTeams, teamsPerPage])
 
     useEffect(() => {
         handlePagination(currentPage);
     }, [allTeams])
-
-    useEffect(() =>{
-        setTotalPages(Math.ceil(allTeams.length / teamsPerPage))
-    }, [teamsPerPage])
 
     const handleTeamsPerPageChange = (numberOfTeams) => {
         setTeamsPerPage(numberOfTeams);
