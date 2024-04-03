@@ -2,12 +2,13 @@ import axios from 'axios';
 import './App.css';
 import TeamTable from './components/TeamTable/TeamTable';
 import { useEffect, useState } from 'react';
+import {API_TEAMS_URL} from "./Constants"
 
 function App() {
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/teams')
+    axios.get(`${API_TEAMS_URL}`)
       .then(response => {
         setTeams(response.data);
         console.log("response: ", response.data)

@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
+import axios from 'axios';
 import "./TeamTable.css"
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Grid, TextField, Pagination } from "@mui/material";
 import TeamRow from "../TeamRow/TeamRow";
@@ -7,12 +8,23 @@ import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import SearchBar from "../SearchBar/SearchBar";
 import RegionPieChart from "../RegionPieChart/RegionPieChart";
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
+import { API_TEAMS_URL } from "../../Constants"
 
 export default function TeamTable({ teams, itemsPerPage = 5 }) {
 
     const [allTeams, setAllTeams] = useState(teams);
     const [teamsPerPage, setTeamsPerPage] = useState(itemsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
+
+    const fetchTeams = async () => {
+        try {
+            const response = await axios.get(`${API_TEAMS_URL}`);
+            console.log('fetched teams: ', response.data);
+            setAllTeams(response.data);
+        } catch (error) {
+            console.error('Error fetching teams: ', error);
+        }
+    }
 
     // total number of pages
     const [totalPages, setTotalPages] = useState(Math.ceil(allTeams.length / teamsPerPage));
@@ -63,8 +75,19 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
     }
 
     const handleDeleteTeam = (teamId) => {
-        const newTeams = allTeams.filter(team => team.id !== teamId)
-        setAllTeams(newTeams)
+        console.log('requesting delete to ', `${API_TEAMS_URL}/${teamId}`);
+        // update optimistically
+        setAllTeams(allTeams.filter(team => team.id !== teamId))
+
+        axios.delete(`${API_TEAMS_URL}/${teamId}`)
+            .then(() => {
+                console.log("deleted team with id: ", teamId)
+            })
+            .catch((error) => {
+                console.log("Error removing team: ", error);
+                // get the correct teams
+                fetchTeams();
+            })
     }
 
     const handleEditTeam = (teamId) => {
@@ -75,12 +98,24 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
 
     const handleSaveEdit = (event) => {
         event.preventDefault();
+
+        console.log('requesting update to ', `${API_TEAMS_URL}/${editTeam.id}`)
+        // Update optimistically
         const index = allTeams.findIndex(team => team.id === editTeam.id)
         const newEditedTeams = [...allTeams]
         newEditedTeams[index] = editTeam
         setAllTeams(newEditedTeams)
         setEditTeamName(null)
         setEditTeam(null)
+
+        axios.post(`${API_TEAMS_URL}/${editTeam.id}`, editTeam)
+            .then(() => {
+                console.log("edited team: ", editTeam.id)
+            })
+            .catch((error) => {
+                console.log("Error editing team: ", error);
+                fetchTeams();
+            })
     }
 
     const handleEditFieldChange = (e) => {
@@ -131,9 +166,20 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
     const handleAddTeam = (event) => {
         event.preventDefault();
         const newTeamWithId = { ...newTeam, id: Math.max(...allTeams.map(team => team.id)) + 1 }
-        setAllTeams([...allTeams, newTeamWithId])
-        setIsAddingTeam(false)
-        setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] })
+        // Update local state optimistically
+        setAllTeams([...allTeams, newTeamWithId]);
+        setIsAddingTeam(false);
+        setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] });
+
+        axios.post(`${API_TEAMS_URL}`, newTeamWithId)
+            .then(() => {
+                console.log("posted team: ", newTeamWithId);
+            })
+            .catch(error => {
+                console.log("Error adding team: ", error);
+                // Get the correct teams
+                fetchTeams();
+            });
     }
 
     const handleSearch = (event) => {
@@ -205,7 +251,7 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
                     data-testid="pagination"
                 />
             </div>
-            <DropdownNumbers maxLength={allTeams.length} step={3} onChange={handleTeamsPerPageChange} title="Teams per page"/>
+            <DropdownNumbers maxLength={allTeams.length} step={3} onChange={handleTeamsPerPageChange} title="Teams per page" />
         </>
     );
 }
