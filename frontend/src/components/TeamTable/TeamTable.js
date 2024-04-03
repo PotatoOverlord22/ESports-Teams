@@ -108,7 +108,7 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
         setEditTeamName(null)
         setEditTeam(null)
 
-        axios.post(`${API_TEAMS_URL}/${editTeam.id}`, editTeam)
+        axios.put(`${API_TEAMS_URL}/${editTeam.id}`, editTeam)
             .then(() => {
                 console.log("edited team: ", editTeam.id)
             })
@@ -165,8 +165,8 @@ export default function TeamTable({ teams, itemsPerPage = 5 }) {
 
     const handleAddTeam = (event) => {
         event.preventDefault();
-        const newTeamWithId = { ...newTeam, id: Math.max(...allTeams.map(team => team.id)) + 1 }
         // Update local state optimistically
+        const newTeamWithId = { ...newTeam, id: Math.max(...allTeams.map(team => team.id)) + 1 }
         setAllTeams([...allTeams, newTeamWithId]);
         setIsAddingTeam(false);
         setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] });
