@@ -1,7 +1,7 @@
 const express = require('express');
 
 
-module.exports = function (service) {
+module.exports = function (controller) {
     const router = express.Router();
     // Add team
     router.post('/teams', (req, res) => {
@@ -10,9 +10,9 @@ module.exports = function (service) {
             return res.status(400).json({ error: 'Request body is missing' });
         }
         try {
-            service.addTeam(req.body);
+            controller.addTeam(req.body);
             return res.status(200).json({ message: 'Team added successfully' });
-        } catch (err) {
+        } catch (error) {
             return res.status(499).json({ error: 'Error adding team' });
         }
     });
@@ -24,8 +24,8 @@ module.exports = function (service) {
             return res.status(404).json({ error: 'Team not found' });
         }
         try {
-            service.deleteTeam(id)
-        } catch (err) {
+            controller.deleteTeam(id)
+        } catch (error) {
             return res.status(400).json({ error: "Couldn't delete team" })
         }
         return res.status(200).json({ message: "Team deleted sucessfully" });
@@ -38,8 +38,8 @@ module.exports = function (service) {
             return res.status(404).json({ error: 'Team not found' });
         }
         try {
-            service.editTeam(req.body, id)
-        } catch (err) {
+            controller.editTeam(req.body, id)
+        } catch (error) {
             return res.status(400).json({ error: "Couldn't edit team" })
         }
         return res.status(200).json({ message: "Team updated sucessfully" });
@@ -47,7 +47,33 @@ module.exports = function (service) {
 
     // Get teams
     router.get('/teams', (req, res) => {
-        return res.json(service.getAllTeams());
+        let { page = 1, pageSize = 5, search = "" } = req.query;
+        page = parseInt(page);
+        pageSize = parseInt(pageSize);
+        if (isNaN(page) || isNaN(pageSize))
+            return res.status(405).json({ error: 'Incorrect query params' });
+        try {
+            const {paginatedFilteredTeams, totalPages} = controller.getFilteredTeamsByPage(page, pageSize, search);
+           
+            res.json({
+                teams: paginatedFilteredTeams,
+                totalPages: totalPages,
+            });
+            res.status(200);
+        }
+        catch (error) {
+            res.status(499).json({ error: "Could not get teams" });
+        }
+    });
+
+    // Region data api
+    router.get('/teams/data/region', (req, res) => {
+        try {
+            res.json(controller.getRegionData())
+            res.status(200);
+        } catch (error) {
+            res.status(500).json({error: "rip server"})
+        }
     });
 
     return router
