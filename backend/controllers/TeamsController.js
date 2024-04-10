@@ -1,4 +1,6 @@
-class TeamService {
+const teams = require("../routes/teams");
+
+class TeamsController {
     constructor(teamRepository) {
         this.teamRepository = teamRepository;
     }
@@ -6,6 +8,42 @@ class TeamService {
     getAllTeams() {
         return this.teamRepository.getAllData();
     }
+
+    getFilteredTeamsByPage(pageNumber, teamsPerPage, search = ""){
+        const teams = this.teamRepository.getAllData();
+
+        const filteredTeams = teams.filter(team => team.region.toLowerCase().match(search.toLowerCase()))
+
+        const indexOfLastTeam = pageNumber * teamsPerPage;
+        const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
+
+        const paginatedFilteredTeams = filteredTeams.slice(indexOfFirstTeam, indexOfLastTeam);
+        const totalPages = Math.ceil(filteredTeams.length / teamsPerPage);
+
+        return {paginatedFilteredTeams, totalPages}
+    }
+
+    computeTotalNumberOfPages(pageSize){
+        const teams = this.teamRepository.getAllData();
+        return Math.ceil(teams.length / pageSize);
+    }
+
+    getRegionData(){
+        const teams = this.teamRepository.getAllData();
+
+        const regionsCount = {};
+        teams.forEach(team => {
+            // if this is undefined it adds 1, else increments it, hence the || 0
+            regionsCount[team.region] = (regionsCount[team.region] || 0) + 1;
+        });
+        let id = 0;
+        return Object.keys(regionsCount).map(region => ({
+            id: id++,
+            value: regionsCount[region],
+            label: region,
+        }));
+    }
+
     setDataToHardCodedTeams() {
         this.teamRepository.setData([
             { id: 1, name: "G2", logo: "https://licensinginternational.org/wp-content/uploads/2020/05/redeye.png", region: "EU", players: [{ id: 1, name: "caps", kda: 4.23, position: "Mid" }, { id: 2, name: "hans sama", kda: 3.45, position: "ADC" }, { id: 3, name: "mikyx", kda: 0.97, position: "Support" }, { id: 4, name: "Yike", kda: 2.03, position: "Jungle" }, { id: 5, name: "Broken Blade", kda: 2.97, position: "Top" }] },
@@ -33,15 +71,11 @@ class TeamService {
     }
     addTeam(team) {
         const teams = this.teamRepository.getAllData();
-        console.log("teams: ", teams);
-        const newTeam = { ...team, id: Math.max(...teams.map(team => team.id)) + 1 }
-        console.log("new team: ", newTeam);
+        const newTeam = { ...team, id: Math.max(...teams.map(team => team.id)) + 1 };
         if (!newTeam || !newTeam.id || !newTeam.name || !newTeam.region || !newTeam.players)
             throw new Error("Invalid team data");
         teams.push(newTeam);
-        console.log("new TEAMS: ", teams);
         this.teamRepository.setData(teams);
-        console.log("setted teams to: ", this.teamRepository.getAllData());
     }
 
     editTeam(editTeam, id) {
@@ -59,4 +93,4 @@ class TeamService {
     }
 }
 
-module.exports = TeamService;
+module.exports = TeamsController;
