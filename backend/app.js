@@ -8,15 +8,15 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-const TeamRepository = require('./repositories/TeamRepository');
-const TeamService = require('./controllers/TeamController');
+const TeamsRepository = require('./repositories/TeamsRepository');
+const TeamsController = require('./controllers/TeamsController');
 
 // Initialize repository and service instances
-const teamRepo = new TeamRepository();
-const teamService = new TeamService(teamRepo);
-teamService.setDataToHardCodedTeams();
+const teamsRepo = new TeamsRepository();
+const teamsController = new TeamsController(teamsRepo);
+teamsController.setDataToHardCodedTeams();
 
-const teamsRouter = require('./routes/teams')(teamService);
+const teamsRouter = require('./routes/teams')(teamsController);
 
 var app = express();
 

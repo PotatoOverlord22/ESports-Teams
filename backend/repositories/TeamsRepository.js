@@ -1,4 +1,4 @@
-class TeamRepository {
+class TeamsRepository {
     constructor(){
         this.teams = [];
     }
@@ -12,4 +12,4 @@ class TeamRepository {
 
 
 
-module.exports = TeamRepository;
+module.exports = TeamsRepository;
