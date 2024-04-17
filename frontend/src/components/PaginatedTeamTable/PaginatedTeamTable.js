@@ -1,11 +1,12 @@
 import TeamTable from "../TeamTable/TeamTable";
-import { API_TEAMS_URL, API_REGION_DATA_URL, DEFAULT_STARTING_PAGE_NUMBER, DEFAULT_DROPDOWN_STEP } from "../../Constants";
+import { API_TEAMS_URL, API_REGION_DATA_URL, DEFAULT_STARTING_PAGE_NUMBER, DEFAULT_DROPDOWN_STEP, API_REGION_CATEGORIES_URL } from "../../Constants";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import { Pagination } from "@mui/material"
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
 import SearchBar from "../SearchBar/SearchBar";
+import RegionMenu from "../RegionMenu/RegionMenu";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
     const [teams, setTeams] = useState([]);
@@ -21,20 +22,21 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
     const [pieChartData, setPieChartData] = useState([]);
 
     // Search
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchRegion, setSearchRegion] = useState("");
 
-    const fetchTeamsPage = async (page = currentPage, itemsPerPage = teamsPerPage, search = searchQuery) => {
+    // Region menu
+    const [regionCategories, setRegionCategories] = useState([]);
+
+    const fetchTeamsPageData = async (page = currentPage, itemsPerPage = teamsPerPage, region = searchRegion) => {
         try {
-            const response = await axios.get(API_TEAMS_URL + `?page=${page}&pageSize=${itemsPerPage}&search=${search}`);
+            const teamPageResponse = await axios.get(API_TEAMS_URL + `?page=${page}&pageSize=${itemsPerPage}&region=${region}`);
             setIsLoading(false);
-            setTeams(response.data.teams);
-            setTotalPages(response.data.totalPages);
+            setTeams(teamPageResponse.data.teams);
+            setTotalPages(teamPageResponse.data.totalPages);
             setCurrentPage(page);
             setTeamsPerPage(itemsPerPage);
-            console.log("total pages: ", totalPages);
-            console.log("current page: ", currentPage);
-            console.log("teams per page: ", teamsPerPage);
-            console.log('fetched teams: ', response.data.teams);
+            console.log('fetched teams: ', teamPageResponse.data.teams);
+            console.log('searched for: ', region);
         } catch (error) {
             console.error('Error fetching teams: ', error);
             setIsLoading(true);
@@ -48,33 +50,53 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                 setPieChartData(response.data);
             })
             .catch(error => {
+                
                 console.log("Error fetching piechart data: ", error);
             })
     }
 
+    const fetchRegionCategories = () =>{
+        axios.get(API_REGION_CATEGORIES_URL)
+        .then(response => {
+            console.log("Fetched region categories: ", response.data)
+            setRegionCategories(response.data);
+        })
+        .catch (error => {
+            console.log("Error fetching region categories: ", error);
+        })
+    }
+
     useEffect(() => {
-        fetchTeamsPage();
+        fetchTeamsPageData();
     }, [])
 
     useEffect(() => {
         fetchPieChartData();
+        fetchRegionCategories()
     }, [teams])
 
     const handlePagination = (pageNumber) => {
         // calculate index ranges in teams for the current page
         console.log("handling pagination", pageNumber)
-        fetchTeamsPage(pageNumber, teamsPerPage);
+        fetchTeamsPageData(pageNumber, teamsPerPage);
     }
 
     const handleTeamsPerPageChange = (numberOfTeams) => {
-        fetchTeamsPage(currentPage, numberOfTeams);
+        fetchTeamsPageData(currentPage, numberOfTeams);
     }
 
     // Search
     const handleSearch = (event) => {
         const { value } = event.target
-        setSearchQuery(value);
-        fetchTeamsPage(DEFAULT_STARTING_PAGE_NUMBER, teamsPerPage, value);
+        setSearchRegion(value);
+        fetchTeamsPageData(DEFAULT_STARTING_PAGE_NUMBER, teamsPerPage, value);
+    }
+
+    // Menu
+    const handleRegionSelect = (region) =>{
+        console.log(region);
+        setSearchRegion(region);
+        fetchTeamsPageData(DEFAULT_STARTING_PAGE_NUMBER, teamsPerPage, region)
     }
 
     return (
@@ -83,8 +105,8 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                 <p>Loading teams...</p>
             ) : (
                 <>
-                <SearchBar onSearch={handleSearch} />
-                    <TeamTable teams={teams} setTeams={setTeams} fetchTeams={fetchTeamsPage}></TeamTable>
+                <RegionMenu regionCategories={regionCategories} onRegionSelect={handleRegionSelect} />
+                    <TeamTable teams={teams} setTeams={setTeams} fetchTeams={fetchTeamsPageData}></TeamTable>
                     <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
                         <Pagination count={totalPages} onChange={(event, page) => { handlePagination(page) }} size="large" color="primary"
                             data-testid="pagination"

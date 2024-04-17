@@ -9,10 +9,11 @@ class TeamsController {
         return this.teamRepository.getAllData();
     }
 
-    getFilteredTeamsByPage(pageNumber, teamsPerPage, search = ""){
+    getFilteredTeamsByPage(pageNumber, teamsPerPage, region = "") {
         const teams = this.teamRepository.getAllData();
-
-        const filteredTeams = teams.filter(team => team.region.toLowerCase().match(search.toLowerCase()))
+        let filteredTeams = teams;
+        if (region !== "")
+            filteredTeams = teams.filter(team => team.region === region)
 
         const indexOfLastTeam = pageNumber * teamsPerPage;
         const indexOfFirstTeam = indexOfLastTeam - teamsPerPage;
@@ -20,15 +21,15 @@ class TeamsController {
         const paginatedFilteredTeams = filteredTeams.slice(indexOfFirstTeam, indexOfLastTeam);
         const totalPages = Math.ceil(filteredTeams.length / teamsPerPage);
 
-        return {paginatedFilteredTeams, totalPages}
+        return { paginatedFilteredTeams, totalPages }
     }
 
-    computeTotalNumberOfPages(pageSize){
+    computeTotalNumberOfPages(pageSize) {
         const teams = this.teamRepository.getAllData();
         return Math.ceil(teams.length / pageSize);
     }
 
-    getRegionData(){
+    getRegionData() {
         const teams = this.teamRepository.getAllData();
 
         const regionsCount = {};
@@ -42,6 +43,13 @@ class TeamsController {
             value: regionsCount[region],
             label: region,
         }));
+    }
+
+    getRegionCategories() {
+        const teams = this.teamRepository.getAllData();
+        const regions = teams.map(team => team.region);
+        // set to remove duplicates
+        return Array.from(new Set(regions));
     }
 
     setDataToHardCodedTeams() {
@@ -58,6 +66,8 @@ class TeamsController {
     setAllTeams(newTeams) {
         this.teamRepository.setData(newTeams);
     }
+
+    // TODO move CRUD to repository layer
 
     deleteTeam(id) {
         const teams = this.teamRepository.getAllData();

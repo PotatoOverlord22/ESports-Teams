@@ -47,14 +47,14 @@ module.exports = function (controller) {
 
     // Get teams
     router.get('/teams', (req, res) => {
-        let { page = 1, pageSize = 5, search = "" } = req.query;
+        let { page = 1, pageSize = 5, region = "" } = req.query;
         page = parseInt(page);
         pageSize = parseInt(pageSize);
         if (isNaN(page) || isNaN(pageSize))
             return res.status(405).json({ error: 'Incorrect query params' });
         try {
-            const {paginatedFilteredTeams, totalPages} = controller.getFilteredTeamsByPage(page, pageSize, search);
-           
+            const { paginatedFilteredTeams, totalPages } = controller.getFilteredTeamsByPage(page, pageSize, region);
+
             res.json({
                 teams: paginatedFilteredTeams,
                 totalPages: totalPages,
@@ -62,17 +62,27 @@ module.exports = function (controller) {
             res.status(200);
         }
         catch (error) {
-            res.status(499).json({ error: "Could not get teams" });
+            res.status(499).json({ error: "Could not get teams " + error });
         }
     });
+    // Get team categories
+    router.get('/teams/region/categories', (req, res) => {
+        try {
+            const categories = controller.getRegionCategories();
+            res.json(categories)
+            res.status(200);
+        } catch (error) {
+            res.status(498).json({ error: error })
+        }
+    })
 
     // Region data api
-    router.get('/teams/data/region', (req, res) => {
+    router.get('/teams/region/data', (req, res) => {
         try {
             res.json(controller.getRegionData())
             res.status(200);
         } catch (error) {
-            res.status(500).json({error: "rip server"})
+            res.status(498).json({ error: error })
         }
     });
 

@@ -59,17 +59,35 @@ describe('TeamController', () => {
     });
 
     test('getFilteredTeamsByPage returns paginated teams based on search query', () => {
-        const searchQuery = "EU";
+        let regionSearch = "EU";
         const pageNumber = 1;
         const teamsPerPage = 2;
-        const { paginatedFilteredTeams, totalPages } = teamsController.getFilteredTeamsByPage(pageNumber, teamsPerPage, searchQuery);
+        let { paginatedFilteredTeams, totalPages } = teamsController.getFilteredTeamsByPage(pageNumber, teamsPerPage, regionSearch);
         // only EU teams included
-        expect(paginatedFilteredTeams.every(team => team.region.toLowerCase().includes(searchQuery.toLowerCase()))).toBe(true);
+        expect(paginatedFilteredTeams.every(team => team.region === regionSearch)).toBe(true);
         // correct pagination
         expect(paginatedFilteredTeams.length).toBe(teamsPerPage);
         // correct number of pages
         expect(totalPages).toBe(2); // test data has 3 eu teams, so 2 pages
+
+        regionSearch = "TR";
+        ({ paginatedFilteredTeams, totalPages } = teamsController.getFilteredTeamsByPage(pageNumber, teamsPerPage, regionSearch));
+        expect(paginatedFilteredTeams.every(team => team.region === regionSearch)).toBe(true);
+        // the page should be incomplete, containing only one team
+        expect(paginatedFilteredTeams.length).toBe(1);
+        // correct number of pages
+        expect(totalPages).toBe(1); // test data has 3 eu teams, so 2 pages
     });
+
+    test('getRegionCategories contains ', () => {
+        const expectedRegions = ['EU', 'KR', 'TR', 'NA'];
+        const regionCategories = teamsController.getRegionCategories();
+
+        // same length
+        expect(regionCategories.length).toBe(expectedRegions.length);
+        // same items
+        expect(regionCategories).toEqual(expect.arrayContaining(expectedRegions));
+    })
 
     test('computeTotalNumberOfPages returns the number of pages of all the data given the size of a page', () => {
         // there are 7 teams in the test data
