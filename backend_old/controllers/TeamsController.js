@@ -1,6 +1,6 @@
 const teams = require("../routes/teams");
 
-class TeamsController {
+class TeamsService {
     constructor(teamRepository) {
         this.teamRepository = teamRepository;
     }
@@ -103,4 +103,4 @@ class TeamsController {
     }
 }
 
-module.exports = TeamsController;
+module.exports = TeamsService;
