@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS players
     "name" TEXT NOT NULL,
     "kda" REAL,
     "position" TEXT,
-    "teamId" INT,
-    FOREIGN KEY ("teamId") REFERENCES teams(id)
+    "team_id" INT,
+    FOREIGN KEY ("team_id") REFERENCES teams(id)
 );

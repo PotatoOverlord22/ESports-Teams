@@ -52,7 +52,7 @@ public class TeamService {
             // TODO validation
             Team team = maybeTeam.get();
             team.setName(updatedTeam.getName());
-            team.setLogourl(updatedTeam.getLogourl());
+            team.setLogoUrl(updatedTeam.getLogoUrl());
             team.setRegion(updatedTeam.getRegion());
 
             teamRepository.save(team);

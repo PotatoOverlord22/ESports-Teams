@@ -22,7 +22,7 @@ public class Player {
     private String position;
 
     @ManyToOne
-    @JoinColumn(name = "teamId")
+    @JoinColumn(name = "team_id")
     @JsonBackReference
     private Team team;
 }

@@ -20,7 +20,7 @@ public class Team {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private String logourl;
+    private String logoUrl;
     private String region;
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
