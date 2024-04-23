@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,17 @@ public class TeamService {
     }
 
     public Page<Team> getFilteredTeamsByPage(int pageNumber, int pageSize, String region) {
+
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize);
-        return teamRepository.findByRegion(region, pageRequest);
+        Page<Team> result;
+        if (Objects.equals(region, ""))
+            result = teamRepository.findAll(pageRequest);
+        else
+            result = teamRepository.findAllByRegionContaining(region, pageRequest);
+        System.out.println("Find by region: " + result);
+        result.get().forEach((team) -> {
+            System.out.println(team.getName());
+        });
+        return result;
     }
 }
