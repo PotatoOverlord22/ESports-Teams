@@ -17,13 +17,13 @@ import java.util.List;
 @Table(name = "teams")
 public class Team {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(insertable = true, updatable = true)
+    private Integer id;
     private String name;
     private String logoUrl;
     private String region;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Player> players;
 }

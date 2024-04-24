@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,9 @@ public class TeamService {
 
     public Team addTeam(Team team) {
         // TODO validation
-        teamRepository.save(team);
+        // add team with free id
+        team.setId(getFreeId());
+        teamRepository.saveAndFlush(team);
         return team;
     }
 
@@ -41,6 +44,23 @@ public class TeamService {
             return maybeTeam.get();
         }
         throw new NotFound("Could not find team with id " + id);
+    }
+
+    public List<String> getRegionCategories() {
+        List<Team> teams = teamRepository.findAll();
+        List<String> regions = teams.stream()
+                .map(Team::getRegion)
+                .distinct()
+                .collect(Collectors.toList());
+        return regions;
+    }
+
+    public Map<String, Long> getRegionData() {
+        List<Team> teams = teamRepository.findAll();
+        Map<String, Long> regionsCount = teams.stream()
+                .collect(Collectors.groupingBy(Team::getRegion, Collectors.counting()));
+
+        return regionsCount;
     }
 
     public List<Team> getAllTeams() {
@@ -78,10 +98,16 @@ public class TeamService {
             result = teamRepository.findAll(pageRequest);
         else
             result = teamRepository.findAllByRegionContaining(region, pageRequest);
-        System.out.println("Find by region: " + result);
-        result.get().forEach((team) -> {
-            System.out.println(team.getName());
-        });
         return result;
     }
+
+    private Integer getFreeId() {
+        List<Team> allTeams = teamRepository.findAll();
+        Integer maxId = allTeams.stream()
+                .map(Team::getId)
+                .max(Integer::compareTo)
+                .orElse(0);
+        return maxId + 1;
+    }
+
 }

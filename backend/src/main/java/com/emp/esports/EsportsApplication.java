@@ -20,7 +20,7 @@ public class EsportsApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		System.out.println(teamRepository);
 		teamRepository.findAll().forEach(team -> {
-			System.out.println(team.getName());
+			System.out.println(team.getId() + " " + team.getName());
 		});
 	}
 }
