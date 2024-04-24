@@ -1,5 +1,6 @@
 package com.emp.esports.controllers;
 
+import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.services.TeamService;
@@ -31,6 +32,16 @@ public class TeamController {
             return ResponseEntity.ok().body(paginatedTeams);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not get teams: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/teams/{teamId}/players")
+    public ResponseEntity<?> getPlayersByTeamId(@PathVariable Integer teamId) {
+        try {
+            List<Player> players = teamService.getAllPlayersByTeamId(teamId);
+            return ResponseEntity.ok().body(players);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not get Players: " + e.getMessage());
         }
     }
 

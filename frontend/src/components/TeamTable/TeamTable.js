@@ -7,13 +7,28 @@ import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import { API_TEAMS_URL } from "../../Constants"
 
-export default function TeamTable({ teams, setTeams, fetchTeams}) {
+export default function TeamTable({ teams, setTeams, fetchTeams }) {
     const [isAddingTeam, setIsAddingTeam] = useState(false);
     const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: 0 }] });
 
     const [editTeam, setEditTeam] = useState(null);
     const [editTeamName, setEditTeamName] = useState(null);
+    const [editTeamPlayers, setEditTeamPlayers] = useState([]);
 
+    const fetchEditTeamPlayers = async (teamId) => {
+        try {
+            const playersResponse = await axios.get(API_TEAMS_URL + `/${teamId}/players`);
+            setEditTeamPlayers(playersResponse.data);
+            console.log('fetched players: ', playersResponse.data);
+        } catch (error) {
+            console.error('Error fetching players: ', error);
+        }
+    }
+
+    useEffect(() => {
+        if (editTeam !== null)
+            fetchEditTeamPlayers(editTeam.id)
+    }, [editTeam]);
 
     const handleAddingTeam = () => {
         setIsAddingTeam(!isAddingTeam);
@@ -173,7 +188,9 @@ export default function TeamTable({ teams, setTeams, fetchTeams}) {
                                 onSubmit={handleSaveEdit}
                                 onFormChange={handleEditFieldChange}
                                 onPlayerFormChange={handleEditPlayerChange}
-                                onCancel={() => { setEditTeam(null) }} />
+                                onCancel={() => { setEditTeam(null) }}
+                                players={editTeamPlayers}
+                            />
                         }
                     </TableBody>
                 </Table>

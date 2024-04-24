@@ -1,7 +1,7 @@
 import { TextField, Typography, TableRow, TableCell, Button } from "@mui/material"
 import { Fragment } from "react"
 
-export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onFormChange, onPlayerFormChange, onCancel }) {
+export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onFormChange, onPlayerFormChange, onCancel, players }) {
     return (
         <TableRow>
             <TableCell colSpan={10} align="center">
@@ -39,7 +39,7 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                     <br></br>
                     <br></br>
                     {
-                        editTeam.players.map(player => (
+                        players.map(player => (
                             <Fragment key={player.id}>
                                 <TextField
                                     type="text"

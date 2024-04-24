@@ -23,7 +23,7 @@ public class Team {
     private String logoUrl;
     private String region;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Player> players;
 }
