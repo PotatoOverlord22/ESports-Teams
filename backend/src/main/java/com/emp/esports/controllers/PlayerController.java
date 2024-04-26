@@ -27,12 +27,11 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
-    @PostMapping("/players/")
+    @PostMapping("/players")
     public ResponseEntity<?> addPlayer(@RequestBody Player player,  @RequestParam Integer teamId) {
         if (player == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing");
         }
-        System.out.println("team id: " + teamId);
         try {
             return ResponseEntity.ok().body(playerService.addNewPlayerToTeam(player, teamId));
         } catch (NotFound e) {
@@ -55,8 +54,7 @@ public class PlayerController {
     @PutMapping("/players/{playerId}")
     public ResponseEntity<?> updatePlayer(@PathVariable Integer playerId, @RequestBody Player updatedPLayer) {
         try {
-            playerService.updatePlayer(playerId, updatedPLayer);
-            return ResponseEntity.ok().body("Player updated successfully");
+            return ResponseEntity.ok().body(playerService.updatePlayer(playerId, updatedPLayer));
         } catch (NotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player not found");
         } catch (Exception e) {

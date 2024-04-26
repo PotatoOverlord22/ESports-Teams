@@ -25,9 +25,8 @@ public class PlayerService {
     }
 
     public Player addPlayer(Player player) {
-        // TODO validation
         player.setId(getFreeId());
-        playerRepository.saveAndFlush(player);
+        playerRepository.save(player);
         return player;
     }
 

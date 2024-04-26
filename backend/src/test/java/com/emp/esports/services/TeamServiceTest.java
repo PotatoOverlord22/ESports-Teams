@@ -2,6 +2,7 @@ package com.emp.esports.services;
 
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
+import com.emp.esports.models.exceptions.BadField;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.repositories.TeamRepository;
 import com.emp.esports.services.TeamService;
@@ -38,30 +39,34 @@ public class TeamServiceTest {
                 .name("team 1")
                 .region("EU")
                 .logoUrl("team 1 logo")
+                .players(new ArrayList<>())
                 .build();
         Team team2 = Team.builder()
                 .id(2)
                 .name("team 2")
                 .region("NA")
                 .logoUrl("team 2 logo")
+                .players(new ArrayList<>())
                 .build();
         Team team3 = Team.builder()
                 .id(3)
                 .name("team 3")
                 .region("EU")
                 .logoUrl("team 3 logo")
+                .players(new ArrayList<>())
                 .build();
         List<Team> teams = Arrays.asList(team1, team2, team3);
         when(teamRepository.findAll()).thenReturn(teams);
     }
 
     @Test
-    void testAddTeam() {
+    void testAddTeam() throws Exception {
         Team team4 = Team.builder()
                 .id(1)
                 .name("team 4")
                 .region("KR")
                 .logoUrl("team 4 logo")
+                .players(new ArrayList<>())
                 .build();
         when(teamRepository.saveAndFlush(team4)).thenReturn(team4);
 
@@ -79,12 +84,14 @@ public class TeamServiceTest {
                 .name("team 1")
                 .logoUrl("team 1 logo")
                 .region("EU")
+                .players(new ArrayList<>())
                 .build();
         Team updatedTeam = Team.builder()
                 .id(teamId)
                 .name("updated team name")
                 .logoUrl("updated logo")
                 .region("updated region")
+                .players(new ArrayList<>())
                 .build();
 
         // mock behavior

@@ -61,7 +61,7 @@ public class TeamController {
     public ResponseEntity<?> updateTeam(@PathVariable Integer teamId, @RequestBody Team updatedTeam) {
         try {
             teamService.updateTeam(teamId, updatedTeam);
-            return ResponseEntity.ok().body("Team updated successfully");
+            return ResponseEntity.ok().body(teamService.getTeamById(teamId));
         } catch (NotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Team not found");
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class TeamController {
         }
         try {
             teamService.addTeam(team);
-            return ResponseEntity.status(HttpStatus.OK).body("Team added successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(team);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding team: " + e.getMessage());
         }

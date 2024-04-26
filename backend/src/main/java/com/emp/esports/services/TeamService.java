@@ -2,6 +2,7 @@ package com.emp.esports.services;
 
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
+import com.emp.esports.models.exceptions.BadField;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.models.validators.TeamValidation;
 import com.emp.esports.repositories.TeamRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.xml.validation.Validator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,9 +26,8 @@ public class TeamService {
         this.teamRepository = teamRepository;
     }
 
-    public Team addTeam(Team team) {
-        // TODO validation
-        // add team with free id
+    public Team addTeam(Team team) throws BadField {
+        TeamValidation.validate(team);
         team.setId(getFreeId());
         teamRepository.saveAndFlush(team);
         return team;
@@ -67,10 +68,10 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
-    public Team updateTeam(Integer id, Team updatedTeam) throws NotFound {
+    public Team updateTeam(Integer id, Team updatedTeam) throws NotFound, BadField {
         Optional<Team> maybeTeam = teamRepository.findById(id);
         if (maybeTeam.isPresent()) {
-            // TODO validation
+            TeamValidation.validate(updatedTeam);
             Team team = maybeTeam.get();
             team.setName(updatedTeam.getName());
             team.setLogoUrl(updatedTeam.getLogoUrl());
