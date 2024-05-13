@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Pagination } from "@mui/material"
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
-import SearchBar from "../SearchBar/SearchBar";
 import RegionMenu from "../RegionMenu/RegionMenu";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
@@ -31,12 +30,11 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
         try {
             const teamPageResponse = await axios.get(API_TEAMS_URL + `?page=${page}&pageSize=${itemsPerPage}&region=${region}`);
             setIsLoading(false);
-            setTeams(teamPageResponse.data.teams);
+            setTeams(teamPageResponse.data.content);
             setTotalPages(teamPageResponse.data.totalPages);
             setCurrentPage(page);
             setTeamsPerPage(itemsPerPage);
-            console.log('fetched teams: ', teamPageResponse.data.teams);
-            console.log('searched for: ', region);
+            console.log('fetched teams: ', teamPageResponse.data.content);
         } catch (error) {
             console.error('Error fetching teams: ', error);
             setIsLoading(true);
