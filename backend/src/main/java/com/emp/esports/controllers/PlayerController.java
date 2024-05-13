@@ -1,5 +1,7 @@
 package com.emp.esports.controllers;
 
+import com.emp.esports.dtos.AddPlayerDTO;
+import com.emp.esports.dtos.UpdatePlayerDTO;
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.NotFound;
@@ -28,12 +30,12 @@ public class PlayerController {
     }
 
     @PostMapping("/players")
-    public ResponseEntity<?> addPlayer(@RequestBody Player player,  @RequestParam Integer teamId) {
-        if (player == null) {
+    public ResponseEntity<?> addPlayer(@RequestBody AddPlayerDTO addPlayerDTO) {
+        if (addPlayerDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing");
         }
         try {
-            return ResponseEntity.ok().body(playerService.addNewPlayerToTeam(player, teamId));
+            return ResponseEntity.ok().body(playerService.addNewPlayerToTeam(addPlayerDTO));
         } catch (NotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Team not found");
         }
@@ -52,9 +54,9 @@ public class PlayerController {
     }
 
     @PutMapping("/players/{playerId}")
-    public ResponseEntity<?> updatePlayer(@PathVariable Integer playerId, @RequestBody Player updatedPLayer) {
+    public ResponseEntity<?> updatePlayer(@PathVariable Integer playerId, @RequestBody UpdatePlayerDTO updatePlayerDTO) {
         try {
-            return ResponseEntity.ok().body(playerService.updatePlayer(playerId, updatedPLayer));
+            return ResponseEntity.ok().body(playerService.updatePlayer(playerId, updatePlayerDTO));
         } catch (NotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player not found");
         } catch (Exception e) {

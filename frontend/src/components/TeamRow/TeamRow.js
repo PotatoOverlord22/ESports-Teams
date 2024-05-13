@@ -1,41 +1,26 @@
 import { useState } from "react";
 import axios from 'axios';
-import { TableRow, TableCell, Button, Typography, TableHead, Table, TableBody } from "@mui/material";
+import { TableRow, TableCell, Button, Typography} from "@mui/material";
 import "./TeamRow.css"
 import { API_PLAYERS_URL, API_TEAMS_URL } from "../../Constants";
 import AddPlayerForm from "../AddPlayerForm/AddPlayerForm";
+import PlayerRow from "../PlayerRow/PlayerRow";
 
 export default function TeamRow({ team, onEdit, onDelete }) {
     const [players, setPlayers] = useState(team.players);
     const [moreInfo, setMoreInfo] = useState(false);
-    const [newPlayer, setNewPlayer] = useState({ id: 0, name: '', position: '', kda: ''});
+    const [newPlayer, setNewPlayer] = useState({ name: '', position: '', kda: '' });
 
     const [isAddingPlayer, setIsAddingPlayer] = useState(false);
 
-    const fetchPlayers = async (teamId) => {
+    const fetchPlayers = async () => {
         try {
-            const playersResponse = await axios.get(API_TEAMS_URL + `/${teamId}/players`);
+            const playersResponse = await axios.get(API_TEAMS_URL + `/${team.id}/players`);
             setPlayers(playersResponse.data);
             console.log('fetched players: ', playersResponse.data);
         } catch (error) {
             console.error('Error fetching players: ', error);
         }
-    }
-
-    const handleDeletePlayer = (playerId) => {
-        console.log('requesting delete to ', `${API_PLAYERS_URL}/${playerId}`);
-        // update optimistically
-        setPlayers(players.filter(player => player.id != playerId))
-
-        axios.delete(`${API_PLAYERS_URL}/${playerId}`)
-            .then(() => {
-                console.log("deleted player with id: ", playerId)
-            })
-            .catch((error) => {
-                console.log("Error removing player: ", error);
-                // get the correct teams
-                fetchPlayers(team.id);
-            })
     }
 
     const handleAddingPlayer = () => {
@@ -56,21 +41,22 @@ export default function TeamRow({ team, onEdit, onDelete }) {
 
     const handleAddPlayer = (event) => {
         event.preventDefault();
+        const playerToSend = { ...newPlayer, teamId: team.id }
+        console.log("player to send: " + playerToSend.name + ", teamId: " + playerToSend.teamId);
 
-        setIsAddingPlayer(false);
-        setNewPlayer({ id: 0, name: '', position: '', kda: ''});
-
-        axios.post(`${API_PLAYERS_URL}/?teamId=${team.id}`, newPlayer)
+        axios.post(API_PLAYERS_URL, playerToSend)
             .then(() => {
-                fetchPlayers(team.id);
-                console.log("posted player: ", newPlayer);
+                fetchPlayers();
             })
             // TODO proper error handling for each error case
             .catch(error => {
                 console.log("Error adding team: ", error);
                 // Get the correct teams
-                fetchPlayers(team.id);
+                fetchPlayers();
             });
+
+        setIsAddingPlayer(false);
+        setNewPlayer({ teamId: 0, name: '', position: '', kda: '' });
     }
 
     return (
@@ -111,23 +97,7 @@ export default function TeamRow({ team, onEdit, onDelete }) {
                             </TableCell>
                         </TableRow>
                         {players.map((player) => (
-                            <TableRow key={player.id}>
-                                <TableCell colSpan="1" align="center">
-                                    <Typography variant="h6" sx={{ textAlign: "center" }}>{player.name}</Typography>
-                                </TableCell>
-                                <TableCell colSpan="1" align="center">
-                                    <Typography variant="h6" sx={{ textAlign: "center" }}>{player.position}</Typography>
-                                </TableCell>
-                                <TableCell colSpan="1" align="center">
-                                    <Typography variant="h6" sx={{ textAlign: "center" }}>{player.kda}</Typography>
-                                </TableCell>
-                                <TableCell colSpan="1" align="center">
-                                    <Button variant="outlined"
-                                        role="edit-button">Edit Player</Button>
-                                    <Button variant="outlined"
-                                        onClick={() => handleDeletePlayer(player.id)}>Delete Player</Button>
-                                </TableCell>
-                            </TableRow>
+                            <PlayerRow player={player} setPlayers={setPlayers} fetchPlayers={fetchPlayers} key={player.id}/>
                         ))}
 
                         {

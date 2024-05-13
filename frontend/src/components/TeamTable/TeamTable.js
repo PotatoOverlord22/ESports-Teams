@@ -25,11 +25,6 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
         }
     }
 
-    useEffect(() => {
-        if (editTeam !== null)
-            fetchEditTeamPlayers(editTeam.id)
-    }, [editTeam]);
-
     const handleAddingTeam = () => {
         setIsAddingTeam(!isAddingTeam);
     }
@@ -187,9 +182,7 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
                                 editTeamNameCopy={editTeamName}
                                 onSubmit={handleSaveEdit}
                                 onFormChange={handleEditFieldChange}
-                                onPlayerFormChange={handleEditPlayerChange}
                                 onCancel={() => { setEditTeam(null) }}
-                                players={editTeamPlayers}
                             />
                         }
                     </TableBody>

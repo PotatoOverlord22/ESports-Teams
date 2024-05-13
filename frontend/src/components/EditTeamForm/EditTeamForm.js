@@ -1,7 +1,7 @@
 import { TextField, Typography, TableRow, TableCell, Button } from "@mui/material"
 import { Fragment } from "react"
 
-export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onFormChange, onPlayerFormChange, onCancel, players }) {
+export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onFormChange, onCancel }) {
     return (
         <TableRow>
             <TableCell colSpan={10} align="center">
@@ -36,52 +36,6 @@ export default function EditTeamForm({ editTeam, editTeamNameCopy, onSubmit, onF
                         gutterbottom="true"
                         required
                     />
-                    <br></br>
-                    <br></br>
-                    {
-                        players.map(player => (
-                            <Fragment key={player.id}>
-                                <TextField
-                                    type="text"
-                                    label="Player Name"
-                                    name="name"
-                                    inputProps={{
-                                        "data-testid": "edit-player-name-form-field",
-                                    }}
-                                    value={player.name}
-                                    onChange={(event) => onPlayerFormChange(event, player.id)}
-                                    variant="outlined"
-                                    gutterbottom="true"
-                                />
-                                <TextField
-                                    type="text"
-                                    label="Position"
-                                    name="position"
-                                    inputProps={{
-                                        "data-testid": "edit-player-position-form-field",
-                                    }}
-                                    value={player.position}
-                                    onChange={(event) => onPlayerFormChange(event, player.id)}
-                                    variant="outlined"
-                                    gutterbottom="true"
-                                />
-                                <TextField
-                                    type="number"
-                                    label="kda"
-                                    name="kda"
-                                    inputProps={{
-                                        "data-testid": "edit-player-kda-form-field",
-                                    }}
-                                    value={player.kda}
-                                    onChange={(event) => onPlayerFormChange(event, player.id)}
-                                    variant="outlined"
-                                    gutterbottom="true"
-                                />
-                                <br></br>
-                                <br></br>
-                            </Fragment>
-                        ))
-                    }
                     <br></br>
                     <Button type="submit" variant="contained" gutterbottom="true">
                         Save Edit

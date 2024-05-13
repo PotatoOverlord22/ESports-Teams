@@ -1,5 +1,7 @@
 package com.emp.esports.services;
 
+import com.emp.esports.dtos.AddPlayerDTO;
+import com.emp.esports.dtos.UpdatePlayerDTO;
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.NotFound;
@@ -36,13 +38,13 @@ public class PlayerService {
         playerRepository.deleteById(id);
     }
 
-    public Player addNewPlayerToTeam(Player player, Integer teamId) throws NotFound{
-
-        if(teamRepository.findById(teamId).isEmpty()){
-            throw new NotFound("Team with id " + teamId + " not found");
+    public Player addNewPlayerToTeam(AddPlayerDTO addPlayerDTO) throws NotFound{
+        System.out.println("player dto: " + addPlayerDTO);
+        if(teamRepository.findById(addPlayerDTO.getTeamId()).isEmpty()){
+            throw new NotFound("Team with id " + addPlayerDTO.getTeamId() + " not found");
         }
-        player.setTeam(teamRepository.findById(teamId).get());
-        return playerRepository.save(player);
+        Player newPlayer = new Player(getFreeId(), addPlayerDTO.getName(), addPlayerDTO.getKda(), addPlayerDTO.getPosition(), teamRepository.findById(addPlayerDTO.getTeamId()).get());
+        return playerRepository.save(newPlayer);
     }
 
     public List<Player> getAllPlayers() {
@@ -71,19 +73,19 @@ public class PlayerService {
         return maxId + 1;
     }
 
-    public Player updatePlayer(Integer id, Player updatedPlayer) throws NotFound {
+    public Player updatePlayer(Integer id, UpdatePlayerDTO updatedPlayer) throws NotFound {
         Optional<Player> maybePlayer = playerRepository.findById(id);
-        if (maybePlayer.isPresent()) {
-            // TODO validation
-            Player player = maybePlayer.get();
-            player.setName(updatedPlayer.getName());
-            player.setKda(updatedPlayer.getKda());
-            player.setPosition(updatedPlayer.getPosition());
+        if (maybePlayer.isEmpty())
+            throw new NotFound("Could not find player with id " + id);
+        // TODO validation
+        Player player = maybePlayer.get();
+        player.setName(updatedPlayer.getName());
+        player.setKda(updatedPlayer.getKda());
+        player.setPosition(updatedPlayer.getPosition());
 
-            playerRepository.save(player);
-            return player;
-        }
-        throw new NotFound("Could not find team with id " + id);
+        playerRepository.save(player);
+        return player;
+
     }
 
     public Page<Player> getPlayers(int pageNumber, int pageSize) {
