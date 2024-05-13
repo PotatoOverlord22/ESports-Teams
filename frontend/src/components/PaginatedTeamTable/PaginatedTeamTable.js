@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Pagination } from "@mui/material"
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
-import SearchBar from "../SearchBar/SearchBar";
 import RegionMenu from "../RegionMenu/RegionMenu";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
