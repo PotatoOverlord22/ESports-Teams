@@ -1,5 +1,6 @@
 package com.emp.esports.services;
 
+import com.emp.esports.dtos.AddTeamDTO;
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.BadField;
@@ -26,11 +27,11 @@ public class TeamService {
         this.teamRepository = teamRepository;
     }
 
-    public Team addTeam(Team team) throws BadField {
-        TeamValidation.validate(team);
-        team.setId(getFreeId());
-        teamRepository.saveAndFlush(team);
-        return team;
+    public Team addTeam(AddTeamDTO addTeamDTO) throws BadField {
+        Team newTeam = new Team(getFreeId(), addTeamDTO.getName(), addTeamDTO.getLogoUrl(), addTeamDTO.getRegion(), addTeamDTO.getPlayers());
+        TeamValidation.validate(newTeam);
+        teamRepository.save(newTeam);
+        return newTeam;
     }
 
     public void deleteTeam(Integer id) throws NotFound {
@@ -100,6 +101,10 @@ public class TeamService {
         else
             result = teamRepository.findAllByRegionContaining(region, pageRequest);
         return result;
+    }
+
+    public int getRandomExistingId(){
+        return teamRepository.findRandomId();
     }
 
     private Integer getFreeId() {

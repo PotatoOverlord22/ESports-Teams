@@ -1,5 +1,6 @@
 package com.emp.esports.controllers;
 
+import com.emp.esports.dtos.AddTeamDTO;
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.NotFound;
@@ -70,13 +71,13 @@ public class TeamController {
     }
 
     @PostMapping("/teams")
-    public ResponseEntity<?> addTeam(@RequestBody Team team) {
-        if (team == null) {
+    public ResponseEntity<?> addTeam(@RequestBody AddTeamDTO addTeamDTO) {
+        if (addTeamDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing");
         }
         try {
-            teamService.addTeam(team);
-            return ResponseEntity.status(HttpStatus.OK).body(team);
+            teamService.addTeam(addTeamDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(addTeamDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding team: " + e.getMessage());
         }

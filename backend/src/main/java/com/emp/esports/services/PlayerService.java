@@ -39,7 +39,6 @@ public class PlayerService {
     }
 
     public Player addNewPlayerToTeam(AddPlayerDTO addPlayerDTO) throws NotFound{
-        System.out.println("player dto: " + addPlayerDTO);
         if(teamRepository.findById(addPlayerDTO.getTeamId()).isEmpty()){
             throw new NotFound("Team with id " + addPlayerDTO.getTeamId() + " not found");
         }
