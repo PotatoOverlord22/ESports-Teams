@@ -4,14 +4,10 @@ import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.BadField;
 import com.emp.esports.models.exceptions.NotFound;
-import com.emp.esports.services.PlayerService;
-import com.emp.esports.services.TeamService;
 import com.emp.esports.utils.Converter;
 import com.emp.esports.utils.Randomizer;
 import com.github.javafaker.Faker;
-import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
