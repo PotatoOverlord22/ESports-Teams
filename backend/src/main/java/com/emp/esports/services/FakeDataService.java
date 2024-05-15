@@ -27,6 +27,10 @@ public class FakeDataService {
     }
 
     @Scheduled(fixedDelay = 20000, initialDelay = 10000) // Execute every 20 seconds with an initial delay of 10 seconds
+    public void addFakeTeamScheduled() {
+        addFakeTeam();
+    }
+
     public void addFakeTeam() {
         Team fakeTeam = generateFakeTeam();
         try {
@@ -38,6 +42,10 @@ public class FakeDataService {
     }
 
     @Scheduled(fixedDelay = 10000, initialDelay = 5000) // Execute every 10 seconds with an initial delay of 5 seconds
+    public void addFakePlayerScheduled() {
+        addFakePlayer();
+    }
+
     public void addFakePlayer() {
         Player fakePlayer = generateFakePlayer();
         try {
@@ -46,6 +54,19 @@ public class FakeDataService {
             System.out.println("Successfully added fake player with id: " + addedPlayer.getId() + " and name: " + addedPlayer.getName() + " to team: " + teamService.getTeamById(existingTeamId).getName());
         } catch (NotFound error) {
             System.out.println("Failed adding fake player: " + error);
+        }
+    }
+
+    public void addLargeAmountOfFakeData() {
+        int numberOfTeamsToAdd = 5000;
+        int numberOfPlayersToAdd = 5000;
+        while(numberOfTeamsToAdd > 0) {
+            addFakeTeam();
+            numberOfTeamsToAdd--;
+        }
+        while(numberOfPlayersToAdd > 0) {
+            addFakePlayer();
+            numberOfPlayersToAdd--;
         }
     }
 
