@@ -1,4 +1,9 @@
 package com.emp.esports.utils.events;
 
-public class TeamAddedEvent {
+import org.springframework.context.ApplicationEvent;
+
+public class TeamAddedEvent extends ApplicationEvent {
+    public TeamAddedEvent(Object source) {
+        super(source);
+    }
 }
