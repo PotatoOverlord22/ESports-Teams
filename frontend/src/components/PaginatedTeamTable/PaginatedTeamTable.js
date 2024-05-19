@@ -76,7 +76,6 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
 
         stompClient.connect({}, () => {
             stompClient.subscribe('/topic/regionData', (message) => {
-                console.log("!!!!!!!!!!!", JSON.parse(message.body))
                 setPieChartData(JSON.parse(message.body));
             })
         }, (error) => {
