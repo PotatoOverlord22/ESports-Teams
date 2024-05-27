@@ -1,11 +1,14 @@
 package com.emp.esports.services;
 
+import com.emp.esports.dtos.AddTeamDTO;
 import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.BadField;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.models.validators.TeamValidation;
 import com.emp.esports.repositories.TeamRepository;
+import com.emp.esports.utils.events.TeamAddedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,16 +24,19 @@ import java.util.stream.Collectors;
 @Service
 public class TeamService {
     private final TeamRepository teamRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, ApplicationEventPublisher eventPublisher) {
         this.teamRepository = teamRepository;
+        this.eventPublisher = eventPublisher;
     }
 
-    public Team addTeam(Team team) throws BadField {
-        TeamValidation.validate(team);
-        team.setId(getFreeId());
-        teamRepository.saveAndFlush(team);
-        return team;
+    public Team addTeam(AddTeamDTO addTeamDTO) throws BadField {
+        Team newTeam = new Team(getFreeId(), addTeamDTO.getName(), addTeamDTO.getLogoUrl(), addTeamDTO.getRegion(), addTeamDTO.getPlayers());
+        TeamValidation.validate(newTeam);
+        teamRepository.save(newTeam);
+        eventPublisher.publishEvent(new TeamAddedEvent(this));
+        return newTeam;
     }
 
     public void deleteTeam(Integer id) throws NotFound {
@@ -100,6 +106,10 @@ public class TeamService {
         else
             result = teamRepository.findAllByRegionContaining(region, pageRequest);
         return result;
+    }
+
+    public int getRandomExistingId(){
+        return teamRepository.findRandomId();
     }
 
     private Integer getFreeId() {

@@ -6,6 +6,7 @@ import com.emp.esports.models.exceptions.BadField;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.repositories.TeamRepository;
 import com.emp.esports.services.TeamService;
+import com.emp.esports.utils.Converter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -70,7 +71,7 @@ public class TeamServiceTest {
                 .build();
         when(teamRepository.saveAndFlush(team4)).thenReturn(team4);
 
-        Team addedTeam = teamService.addTeam(team4);
+        Team addedTeam = teamService.addTeam(Converter.convertTeamToAddTeamDTO(team4));
 
         assertThat(addedTeam).isEqualTo(team4);
         verify(teamRepository).saveAndFlush(team4);

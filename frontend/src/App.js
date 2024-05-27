@@ -20,7 +20,7 @@ function App() {
 
   makeRequestToServer();
 
-  setInterval(makeRequestToServer, 3000);
+  setInterval(makeRequestToServer, 5000);
 
   return (
     <div className="App">

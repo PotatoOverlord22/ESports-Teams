@@ -15,21 +15,6 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
     const [editTeamName, setEditTeamName] = useState(null);
     const [editTeamPlayers, setEditTeamPlayers] = useState([]);
 
-    const fetchEditTeamPlayers = async (teamId) => {
-        try {
-            const playersResponse = await axios.get(API_TEAMS_URL + `/${teamId}/players`);
-            setEditTeamPlayers(playersResponse.data);
-            console.log('fetched players: ', playersResponse.data);
-        } catch (error) {
-            console.error('Error fetching players: ', error);
-        }
-    }
-
-    useEffect(() => {
-        if (editTeam !== null)
-            fetchEditTeamPlayers(editTeam.id)
-    }, [editTeam]);
-
     const handleAddingTeam = () => {
         setIsAddingTeam(!isAddingTeam);
     }
@@ -187,9 +172,7 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
                                 editTeamNameCopy={editTeamName}
                                 onSubmit={handleSaveEdit}
                                 onFormChange={handleEditFieldChange}
-                                onPlayerFormChange={handleEditPlayerChange}
                                 onCancel={() => { setEditTeam(null) }}
-                                players={editTeamPlayers}
                             />
                         }
                     </TableBody>

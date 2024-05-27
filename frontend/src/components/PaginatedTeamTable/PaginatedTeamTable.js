@@ -1,13 +1,16 @@
 import TeamTable from "../TeamTable/TeamTable";
-import { API_TEAMS_URL, API_REGION_DATA_URL, DEFAULT_STARTING_PAGE_NUMBER, DEFAULT_DROPDOWN_STEP, API_REGION_CATEGORIES_URL } from "../../Constants";
+import { API_TEAMS_URL, API_REGION_DATA_URL, DEFAULT_STARTING_PAGE_NUMBER, DEFAULT_DROPDOWN_STEP, API_REGION_CATEGORIES_URL, WEBSOCKET_BASE_URL, REGION_DATA_SOCKET_URL } from "../../Constants";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import { Pagination } from "@mui/material"
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
 import RegionMenu from "../RegionMenu/RegionMenu";
+import Stomp from "stompjs";
+import SockJS from "sockjs-client";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
+
     const [teams, setTeams] = useState([]);
 
     // Pagination
@@ -19,6 +22,7 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
 
     // Pie chart
     const [pieChartData, setPieChartData] = useState([]);
+
 
     // Search
     const [searchRegion, setSearchRegion] = useState("");
@@ -48,24 +52,36 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                 setPieChartData(response.data);
             })
             .catch(error => {
-                
+
                 console.log("Error fetching piechart data: ", error);
             })
     }
 
-    const fetchRegionCategories = () =>{
+    const fetchRegionCategories = () => {
         axios.get(API_REGION_CATEGORIES_URL)
-        .then(response => {
-            console.log("Fetched region categories: ", response.data)
-            setRegionCategories(response.data);
-        })
-        .catch (error => {
-            console.log("Error fetching region categories: ", error);
-        })
+            .then(response => {
+                console.log("Fetched region categories: ", response.data)
+                setRegionCategories(response.data);
+            })
+            .catch(error => {
+                console.log("Error fetching region categories: ", error);
+            })
     }
 
     useEffect(() => {
         fetchTeamsPageData();
+
+        const pieChartSocket = new SockJS(WEBSOCKET_BASE_URL)
+        const stompClient = Stomp.over(pieChartSocket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/regionData', (message) => {
+                console.log("!!!!!!!!!!!", JSON.parse(message.body))
+                setPieChartData(JSON.parse(message.body));
+            })
+        }, (error) => {
+            console.log("error subscribing: ", error);
+        })
     }, [])
 
     useEffect(() => {
@@ -91,11 +107,13 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
     }
 
     // Menu
-    const handleRegionSelect = (region) =>{
+    const handleRegionSelect = (region) => {
         console.log(region);
         setSearchRegion(region);
         fetchTeamsPageData(DEFAULT_STARTING_PAGE_NUMBER, teamsPerPage, region)
     }
+
+    // 
 
     return (
         <>
@@ -103,7 +121,7 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                 <p>Loading teams...</p>
             ) : (
                 <>
-                <RegionMenu regionCategories={regionCategories} onRegionSelect={handleRegionSelect} />
+                    <RegionMenu regionCategories={regionCategories} onRegionSelect={handleRegionSelect} />
                     <TeamTable teams={teams} setTeams={setTeams} fetchTeams={fetchTeamsPageData}></TeamTable>
                     <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
                         <Pagination count={totalPages} onChange={(event, page) => { handlePagination(page) }} size="large" color="primary"
@@ -111,7 +129,7 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                         />
                     </div>
                     <div style={{ display: 'flex', marginTop: "20px", alignItems: 'center', justifyContent: 'center' }}>
-                        <RegionPieChart data={pieChartData}/>
+                        <RegionPieChart data={pieChartData} />
                     </div>
                     <DropdownNumbers maxLength={totalPages * teamsPerPage} step={DEFAULT_DROPDOWN_STEP} onChange={handleTeamsPerPageChange} title="Teams per page" />
                 </>
