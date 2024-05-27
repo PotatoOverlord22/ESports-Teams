@@ -5,6 +5,7 @@ import com.emp.esports.models.entities.Player;
 import com.emp.esports.models.entities.Team;
 import com.emp.esports.models.exceptions.NotFound;
 import com.emp.esports.services.TeamService;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class TeamController {
     private final TeamService teamService;
-
-    public TeamController(TeamService teamService) {
-        this.teamService = teamService;
-    }
 
     @GetMapping("/teams")
     public ResponseEntity<?> getTeams(@RequestParam(defaultValue = "0") int page,

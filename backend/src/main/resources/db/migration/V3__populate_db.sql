@@ -1,13 +1,13 @@
 -- Insert teams
-INSERT INTO teams ("id", "name", "logo_url", "region")
+INSERT INTO teams ("name", "logo_url", "region")
 VALUES
-    (1, 'G2', 'https://licensinginternational.org/wp-content/uploads/2020/05/redeye.png', 'EU'),
-    (2, 'Fnatic', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1631819669150_fnc-2021-worlds.png', 'EU'),
-    (3, 'Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'EU'),
-    (4, 'kt Rolsters', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2Fkt_darkbackground.png', 'KR'),
-    (5, 'Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'KR'),
-    (6, 'Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'TR'),
-    (7, 'FlyQuest', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2Fflyquest-new-on-dark.png', 'NA');
+    ('G2', 'https://licensinginternational.org/wp-content/uploads/2020/05/redeye.png', 'EU'),
+    ('Fnatic', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2F1631819669150_fnc-2021-worlds.png', 'EU'),
+    ('Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'EU'),
+    ('kt Rolsters', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2Fkt_darkbackground.png', 'KR'),
+    ('Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'KR'),
+    ('Mad Lions KOI', 'https://s-qwer.op.gg/images/lol/teams/334_1672192037655.png', 'TR'),
+    ('FlyQuest', 'https://am-a.akamaihd.net/image?resize=200:&f=http%3A%2F%2Fstatic.lolesports.com%2Fteams%2Fflyquest-new-on-dark.png', 'NA');
 
 -- Insert players for each team
 -- Team G2 players

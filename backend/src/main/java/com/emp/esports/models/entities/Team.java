@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "teams")
 public class Team {
     @Id
-    @Column(insertable = true, updatable = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String logoUrl;

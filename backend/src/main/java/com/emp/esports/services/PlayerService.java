@@ -38,8 +38,8 @@ public class PlayerService {
         playerRepository.deleteById(id);
     }
 
-    public Player addNewPlayerToTeam(AddPlayerDTO addPlayerDTO) throws NotFound{
-        if(teamRepository.findById(addPlayerDTO.getTeamId()).isEmpty()){
+    public Player addNewPlayerToTeam(AddPlayerDTO addPlayerDTO) throws NotFound {
+        if (teamRepository.findById(addPlayerDTO.getTeamId()).isEmpty()) {
             throw new NotFound("Team with id " + addPlayerDTO.getTeamId() + " not found");
         }
         Player newPlayer = new Player(getFreeId(), addPlayerDTO.getName(), addPlayerDTO.getKda(), addPlayerDTO.getPosition(), teamRepository.findById(addPlayerDTO.getTeamId()).get());
@@ -90,6 +90,10 @@ public class PlayerService {
     public Page<Player> getPlayers(int pageNumber, int pageSize) {
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize);
         return playerRepository.findAll(pageRequest);
+    }
+
+    public void savePlayers(List<Player> playersToSave) {
+        playerRepository.saveAll(playersToSave);
     }
 
 }

@@ -98,7 +98,6 @@ public class TeamService {
     }
 
     public Page<Team> getFilteredTeamsByPage(int pageNumber, int pageSize, String region) {
-
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<Team> result;
         if (Objects.equals(region, ""))
@@ -119,6 +118,11 @@ public class TeamService {
                 .max(Integer::compareTo)
                 .orElse(0);
         return maxId + 1;
+    }
+
+    public void saveTeams(List<Team> teamsToSave){
+        teamRepository.saveAll(teamsToSave);
+        eventPublisher.publishEvent(new TeamAddedEvent(this));
     }
 
 }
