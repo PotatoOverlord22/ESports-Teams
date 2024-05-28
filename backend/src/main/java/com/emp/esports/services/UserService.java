@@ -3,15 +3,13 @@ package com.emp.esports.services;
 import com.emp.esports.dtos.AuthenticationRequest;
 import com.emp.esports.dtos.AuthenticationResponse;
 import com.emp.esports.dtos.RegisterRequest;
+import com.emp.esports.security.JwtService;
 import com.emp.esports.utils.Role;
 import com.emp.esports.models.entities.User;
 import com.emp.esports.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

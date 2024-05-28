@@ -1,4 +1,4 @@
-package com.emp.esports.services;
+package com.emp.esports.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
