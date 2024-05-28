@@ -1,5 +1,6 @@
 package com.emp.esports.security;
 
+import com.emp.esports.utils.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -44,16 +45,17 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails, Role role){
+        return generateToken(new HashMap<>(), userDetails, role);
     }
 
     public String generateToken(Map<String, Objects> extraClaims,
-                                UserDetails userDetails) {
+                                UserDetails userDetails, Role role) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 // Available for 24h
                 .setExpiration(new Date((System.currentTimeMillis() + 1000 * 60 * 24)))

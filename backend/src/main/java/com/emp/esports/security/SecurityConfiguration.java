@@ -28,9 +28,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth ->
                         auth
                                 // Authentication
-                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
                                 // Server Status
                                 .requestMatchers("/api/status").permitAll()
+                                // Players
+                                .requestMatchers("/api/players").hasAnyRole("MANAGER", "ADMIN")
                                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
