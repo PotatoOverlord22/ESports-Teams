@@ -34,3 +34,5 @@ build/
 
 ### Database creation ###
 /docker-compose.yml
+/src/main/resources/keystore
+/src/main/resources/env.properties
