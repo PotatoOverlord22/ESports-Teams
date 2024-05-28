@@ -9,6 +9,7 @@ import com.emp.esports.services.PlayerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class PlayerController {
     }
 
     @PostMapping("/players")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> addPlayer(@RequestBody AddPlayerDTO addPlayerDTO) {
         if (addPlayerDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing");
@@ -42,6 +44,7 @@ public class PlayerController {
     }
 
     @DeleteMapping("/players/{playerId}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> deletePlayer(@PathVariable Integer playerId) {
         try {
             playerService.deletePlayer(playerId);
@@ -54,6 +57,7 @@ public class PlayerController {
     }
 
     @PutMapping("/players/{playerId}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> updatePlayer(@PathVariable Integer playerId, @RequestBody UpdatePlayerDTO updatePlayerDTO) {
         try {
             return ResponseEntity.ok().body(playerService.updatePlayer(playerId, updatePlayerDTO));
