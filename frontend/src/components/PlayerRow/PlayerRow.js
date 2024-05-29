@@ -2,15 +2,23 @@ import { API_PLAYERS_URL } from "../../Constants";
 import axios from "axios";
 import { TableRow, TableCell, Button, Typography, TextField } from "@mui/material";
 import { useState } from "react";
+import { UserContext } from "../../contexts/UserContext";
+import { useContext } from "react";
 
 export default function PlayerRow({ player, setPlayers, fetchPlayers }) {
+    const { token } = useContext(UserContext);
+
     const [isEditable, setIsEditable] = useState(false);
     const [editPlayer, setEditPlayer] = useState({ name: player.name, position: player.position, kda: player.kda });
 
     const handleDeletePlayer = (playerId) => {
         console.log('requesting delete to ', `${API_PLAYERS_URL}/${playerId}`);
 
-        axios.delete(`${API_PLAYERS_URL}/${playerId}`)
+        axios.delete(`${API_PLAYERS_URL}/${playerId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 console.log("deleted player with id: ", playerId)
             })
@@ -52,7 +60,11 @@ export default function PlayerRow({ player, setPlayers, fetchPlayers }) {
     }
 
     const handleUpdatePlayer = () => {
-        axios.put(`${API_PLAYERS_URL}/${player.id}`, editPlayer)
+        axios.put(`${API_PLAYERS_URL}/${player.id}`, editPlayer, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 console.log("Successfully updated player with id " + player.id);
             })

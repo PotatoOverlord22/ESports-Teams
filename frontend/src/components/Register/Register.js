@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API_REGISTER_URL } from '../../Constants';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 
 const Register = () => {
+  const { login } = useContext(UserContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_REGISTER_URL, { username, email, password});
-      // Handle successful registration, perhaps redirect to login
+      const response = await axios.post(API_REGISTER_URL, { username, email, password });
+      login(response.data.token);
+      navigate('/');
     } catch (error) {
       console.error('Registration error', error);
     }

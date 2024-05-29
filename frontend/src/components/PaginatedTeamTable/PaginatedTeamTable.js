@@ -2,7 +2,7 @@ import TeamTable from "../TeamTable/TeamTable";
 import { API_TEAMS_URL, API_REGION_DATA_URL, DEFAULT_STARTING_PAGE_NUMBER, DEFAULT_DROPDOWN_STEP, API_REGION_CATEGORIES_URL, WEBSOCKET_BASE_URL, REGION_DATA_SOCKET_URL } from "../../Constants";
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { Pagination } from "@mui/material"
+import { Button, Pagination } from "@mui/material"
 import DropdownNumbers from "../DropdownNumbers/DropdownNumbers";
 import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
 import RegionMenu from "../RegionMenu/RegionMenu";
@@ -13,7 +13,7 @@ import { UserContext } from "../../contexts/UserContext";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
 
-    const { token } = useContext(UserContext);
+    const { token, logout } = useContext(UserContext);
     const [teams, setTeams] = useState([]);
 
     // Pagination
@@ -148,6 +148,9 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
                         <RegionPieChart data={pieChartData} />
                     </div>
                     <DropdownNumbers maxLength={totalPages * teamsPerPage} step={DEFAULT_DROPDOWN_STEP} onChange={handleTeamsPerPageChange} title="Teams per page" />
+                    <Button onClick={() => {
+                        logout();
+                    }}>Logout</Button>
                 </>
             )}
         </>

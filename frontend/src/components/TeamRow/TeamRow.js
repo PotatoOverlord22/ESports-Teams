@@ -5,8 +5,12 @@ import "./TeamRow.css"
 import { API_PLAYERS_URL, API_TEAMS_URL } from "../../Constants";
 import AddPlayerForm from "../AddPlayerForm/AddPlayerForm";
 import PlayerRow from "../PlayerRow/PlayerRow";
+import { UserContext } from "../../contexts/UserContext";
+import { useContext } from "react";
 
 export default function TeamRow({ team, onEdit, onDelete }) {
+    const { token } = useContext(UserContext);
+
     const [players, setPlayers] = useState(team.players);
     const [moreInfo, setMoreInfo] = useState(false);
     const [newPlayer, setNewPlayer] = useState({ name: '', position: '', kda: '' });
@@ -15,7 +19,11 @@ export default function TeamRow({ team, onEdit, onDelete }) {
 
     const fetchPlayers = async () => {
         try {
-            const playersResponse = await axios.get(API_TEAMS_URL + `/${team.id}/players`);
+            const playersResponse = await axios.get(API_TEAMS_URL + `/${team.id}/players`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setPlayers(playersResponse.data);
             console.log('fetched players: ', playersResponse.data);
         } catch (error) {
@@ -44,7 +52,11 @@ export default function TeamRow({ team, onEdit, onDelete }) {
         const playerToSend = { ...newPlayer, teamId: team.id }
         console.log("player to send: " + playerToSend.name + ", teamId: " + playerToSend.teamId);
 
-        axios.post(API_PLAYERS_URL, playerToSend)
+        axios.post(API_PLAYERS_URL, playerToSend, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 fetchPlayers();
             })

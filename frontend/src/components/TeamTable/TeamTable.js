@@ -6,8 +6,12 @@ import TeamRow from "../TeamRow/TeamRow";
 import AddTeamForm from "../AddTeamForm/AddTeamForm";
 import EditTeamForm from "../EditTeamForm/EditTeamForm";
 import { API_TEAMS_URL } from "../../Constants"
+import { UserContext } from "../../contexts/UserContext";
+import { useContext } from "react";
 
 export default function TeamTable({ teams, setTeams, fetchTeams }) {
+    const { token } = useContext(UserContext);
+
     const [isAddingTeam, setIsAddingTeam] = useState(false);
     const [newTeam, setNewTeam] = useState({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: 0 }] });
 
@@ -24,7 +28,11 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
         // update optimistically
         setTeams(teams.filter(team => team.id !== teamId))
 
-        axios.delete(`${API_TEAMS_URL}/${teamId}`)
+        axios.delete(`${API_TEAMS_URL}/${teamId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 console.log("deleted team with id: ", teamId)
             })
@@ -53,7 +61,11 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
         setEditTeamName(null)
         setEditTeam(null)
 
-        axios.put(`${API_TEAMS_URL}/${editTeam.id}`, editTeam)
+        axios.put(`${API_TEAMS_URL}/${editTeam.id}`, editTeam, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 console.log("edited team: ", editTeam.id)
             })
@@ -116,7 +128,11 @@ export default function TeamTable({ teams, setTeams, fetchTeams }) {
         setIsAddingTeam(false);
         setNewTeam({ name: '', region: '', players: [{ id: 1, name: '', position: '', kda: '' }] });
 
-        axios.post(`${API_TEAMS_URL}`, newTeamWithId)
+        axios.post(`${API_TEAMS_URL}`, newTeamWithId, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(() => {
                 fetchTeams();
                 console.log("posted team: ", newTeamWithId);
