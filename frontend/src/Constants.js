@@ -1,10 +1,10 @@
-export const API_BASE_URL = 'http://localhost:8080/api';
-export const API_TEAMS_URL = 'http://localhost:8080/api/teams';
-export const API_REGION_DATA_URL ='http://localhost:8080/api/teams/region/data'
-export const API_REGION_CATEGORIES_URL ='http://localhost:8080/api/teams/region/categories'
-export const API_PLAYERS_URL = 'http://localhost:8080/api/players';
-export const API_STATUS_URL = 'http://localhost:8080/api/status';
-export const WEBSOCKET_BASE_URL = "http://localhost:8080/websockets"
+export const API_BASE_URL = 'https://localhost:8080/api';
+export const API_TEAMS_URL = 'https://localhost:8080/api/teams';
+export const API_REGION_DATA_URL ='https://localhost:8080/api/teams/region/data'
+export const API_REGION_CATEGORIES_URL ='https://localhost:8080/api/teams/region/categories'
+export const API_PLAYERS_URL = 'https://localhost:8080/api/players';
+export const API_STATUS_URL = 'https://localhost:8080/api/status';
+export const WEBSOCKET_BASE_URL = "https://localhost:8080/websockets"
 export const REGION_DATA_SOCKET_URL = "/topic/regionData"
 export const DEFAULT_NUMBER_OF_RETRIES = 5;
 export const DEFAULT_STARTING_PAGE_NUMBER = 1;
