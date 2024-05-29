@@ -22,6 +22,9 @@ const UserProvider = ({ children }) => {
         localStorage.setItem('token', jwtToken);
         setToken(jwtToken);
         const decodedToken = jwtDecode(jwtToken);
+        console.log(decodedToken);
+        console.log(decodedToken.sub);
+        console.log(decodedToken.role);
         setUser({
             username: decodedToken.sub,
             role: decodedToken.role,

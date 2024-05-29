@@ -8,9 +8,12 @@ import RegionPieChart from "../TeamRegionPieChart/TeamRegionPieChart";
 import RegionMenu from "../RegionMenu/RegionMenu";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
 
 export default function PaginatedTeamTable({ itemsPerPage }) {
 
+    const { token } = useContext(UserContext);
     const [teams, setTeams] = useState([]);
 
     // Pagination
@@ -32,7 +35,13 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
 
     const fetchTeamsPageData = async (page = currentPage, itemsPerPage = teamsPerPage, region = searchRegion) => {
         try {
-            const teamPageResponse = await axios.get(API_TEAMS_URL + `?page=${page}&pageSize=${itemsPerPage}&region=${region}`);
+            const teamPageResponse = await axios.get(API_TEAMS_URL + `?page=${page}&pageSize=${itemsPerPage}&region=${region}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
             setIsLoading(false);
             setTeams(teamPageResponse.data.content);
             setTotalPages(teamPageResponse.data.totalPages);
@@ -46,7 +55,11 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
     }
 
     const fetchPieChartData = () => {
-        axios.get(API_REGION_DATA_URL)
+        axios.get(API_REGION_DATA_URL, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log("Fetched piechart data: ", response.data);
                 setPieChartData(response.data);
@@ -58,7 +71,11 @@ export default function PaginatedTeamTable({ itemsPerPage }) {
     }
 
     const fetchRegionCategories = () => {
-        axios.get(API_REGION_CATEGORIES_URL)
+        axios.get(API_REGION_CATEGORIES_URL, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log("Fetched region categories: ", response.data)
                 setRegionCategories(response.data);
