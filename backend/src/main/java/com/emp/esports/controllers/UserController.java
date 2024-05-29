@@ -21,6 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addUserWithRole(@RequestBody AddUserWithRoleDto newUser) {
         try {
             userService.addUserWithRole(newUser);
@@ -31,6 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUserPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
         try {
             Page<User> paginatedUsers = userService.getUsersPage(page - 1, pageSize);
@@ -41,6 +43,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
         try {
             userService.deleteUser(userId);
@@ -53,6 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable Integer userId, @RequestBody UpdateUserDto updateUserDto) {
         try {
             userService.updateUser(userId, updateUserDto);
