@@ -1,6 +1,8 @@
 package com.emp.esports.config;
 
+import com.emp.esports.models.entities.User;
 import com.emp.esports.repositories.UserRepository;
+import com.emp.esports.security.UserDetailsServiceImpl;
 import com.emp.esports.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,18 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository repository;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
-    }
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return repository::findByUsername;
     }
 
     @Bean

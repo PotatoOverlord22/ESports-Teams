@@ -1,4 +1,4 @@
-package com.emp.esports.services;
+package com.emp.esports.security;
 
 import com.emp.esports.dtos.AuthenticationRequest;
 import com.emp.esports.dtos.AuthenticationResponse;
@@ -9,8 +9,6 @@ import com.emp.esports.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +24,15 @@ public class AuthenticationService {
         return userRepository.findByUsername(username);
     }
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request, Role role) {
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(role)
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user, user.getRole());
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -43,7 +41,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername());
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user, user.getRole());
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

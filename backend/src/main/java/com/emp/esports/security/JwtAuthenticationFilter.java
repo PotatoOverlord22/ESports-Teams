@@ -1,6 +1,6 @@
-package com.emp.esports.config;
+package com.emp.esports.security;
 
-import com.emp.esports.services.JwtService;
+import com.emp.esports.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

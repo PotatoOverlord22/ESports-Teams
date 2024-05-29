@@ -10,6 +10,7 @@ import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/teams/{teamId}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> deleteTeam(@PathVariable Integer teamId) {
         try {
             teamService.deleteTeam(teamId);
@@ -57,6 +59,7 @@ public class TeamController {
     }
 
     @PutMapping("/teams/{teamId}")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> updateTeam(@PathVariable Integer teamId, @RequestBody Team updatedTeam) {
         try {
             teamService.updateTeam(teamId, updatedTeam);
@@ -69,6 +72,7 @@ public class TeamController {
     }
 
     @PostMapping("/teams")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<?> addTeam(@RequestBody AddTeamDTO addTeamDTO) {
         if (addTeamDTO == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing");

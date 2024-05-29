@@ -1,27 +1,26 @@
 package com.emp.esports.services;
 
-import com.emp.esports.dtos.AuthenticationRequest;
-import com.emp.esports.dtos.AuthenticationResponse;
+import com.emp.esports.dtos.AddUserWithRoleDto;
 import com.emp.esports.dtos.RegisterRequest;
-import com.emp.esports.utils.Role;
+import com.emp.esports.dtos.UpdateUserDto;
+import com.emp.esports.models.exceptions.NotFound;
+import com.emp.esports.security.AuthenticationService;
 import com.emp.esports.models.entities.User;
 import com.emp.esports.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
     public void save(User user) {
         // TODO user validation
@@ -32,26 +31,45 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+    public void addUserWithRole(AddUserWithRoleDto newUserDto) {
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .username(newUserDto.getUsername())
+                .email(newUserDto.getEmail())
+                .password(newUserDto.getPassword())
                 .build();
-        userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        authenticationService.register(registerRequest, newUserDto.getRole());
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var user = userRepository.findByUsername(request.getUsername());
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+    public Page<User> getUsersPage(int page, int pageSize) {
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+        return userRepository.findAll(pageRequest);
+    }
+
+    public void deleteUser(Integer userId) throws NotFound {
+        if (!userRepository.existsById(userId))
+            throw new NotFound("Could not find user with id " + userId);
+        userRepository.deleteById(userId);
+    }
+
+    public User updateUser(Integer userId, UpdateUserDto updateUserDto) throws NotFound {
+        Optional<User> maybeUser = userRepository.findById(userId);
+        if (maybeUser.isPresent()) {
+            // TODO validation
+            User user = maybeUser.get();
+            user.setUsername(updateUserDto.getNewUsername());
+            user.setPassword(updateUserDto.getNewPassword());
+            user.setEmail(updateUserDto.getNewEmail());
+            user.setRole(updateUserDto.getNewRole());
+
+            userRepository.save(user);
+            return user;
+        }
+        throw new NotFound("Could not find user with id " + userId);
+    }
+
+    public User getUserById(Integer userId) throws NotFound {
+        if (!userRepository.existsById(userId))
+            throw new NotFound("Could not find user with id " + userId);
+        return userRepository.findById(userId).get();
     }
 }
