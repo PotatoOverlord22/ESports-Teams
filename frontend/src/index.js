@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { UserProvider } from './contexts/UserContext';
+import { ServerStatusProvider } from './contexts/ServerStatusContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ServerStatusProvider>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </ServerStatusProvider>
   </React.StrictMode>
 );
 

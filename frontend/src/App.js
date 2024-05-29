@@ -1,28 +1,13 @@
 import './App.css';
-import axios from 'axios';
-import { API_STATUS_URL } from './Constants';
+import { ServerStatusContext } from './contexts/ServerStatusContext';
 import PaginatedTeamTable from './components/PaginatedTeamTable/PaginatedTeamTable';
 import { Offline, Online } from 'react-detect-offline';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
-  const [isServerOnline, setIsServerOnline] = useState(false);
-
-  const makeRequestToServer = () => {
-    axios.get(API_STATUS_URL)
-      .then(response => {
-        setIsServerOnline(true);
-      })
-      .catch(error => {
-        setIsServerOnline(false);
-      });
-  };
-
-  makeRequestToServer();
-
-  setInterval(makeRequestToServer, 5000);
-
+  const {isServerOnline} = useContext(ServerStatusContext);
+  
   return (
     <div className="App">
       <BrowserRouter>
