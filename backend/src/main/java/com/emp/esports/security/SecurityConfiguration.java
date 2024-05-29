@@ -33,6 +33,8 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 // Server Status
                                 .requestMatchers("/api/status").permitAll()
+                                // Websockets
+                                .requestMatchers("websockets/**").permitAll()
                                 // Players
                                 .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
