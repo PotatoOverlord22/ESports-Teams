@@ -1,0 +1,2 @@
+## <ul>&nbsp; &nbsp; A full-stack ESports team management app with React and Java Spring. The frontend, built with Material UI, supports CRUD operations, real-time stats via websockets, offline detection, and Jest testing. 
+## <ul>&nbsp; &nbsp; The backend uses Spring Boot, Spring Security, JWT for auth, Flyway for PSQL Supabase migrations, Lombok to reduce boilerplate, JavaFaker for mock data, and AssertJ for tests. Websockets handle real-time updates, and the backend is dockerized.
